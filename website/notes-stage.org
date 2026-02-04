@@ -16,7 +16,6 @@
 # #+MACRO: slides (eval (progn (setq slides "")(dotimes (i (string-to-number $2)) (setq slides (concat slides (concat (format (concat "[sidebar]\nimage::./img/" $1 "-%02d") i) ".png[scaledwidth=65%]\n\n" )))) slides ))
 #+MACRO: box-start @@html:<div class="box">@@
 #+MACRO: box-end @@html:</ div>@@
-#+MACRO: bind916 @@html:<img src="img/bind-9-16-badge.png">@@
 #+MACRO: line @@html:<hr />@@
 
 #+TAGS: noexport(e)
@@ -928,7 +927,7 @@ dnslab.org. 86400 IN SOA (
    and the DNS server/resolver. Current default is 4096, must be
    between 512 and 4096. The default changed to 1232 on [[https://dnsflagday.net/2020/][/DNS flag day
    2020/]]
- * {{{bind916}}} [[https://datatracker.ietf.org/doc/html/rfc8914][RFC 8914 - Extended DNS Errors]] defines a way to
+ * [[https://datatracker.ietf.org/doc/html/rfc8914][RFC 8914 - Extended DNS Errors]] defines a way to
    deliver additional error information in an DNS response. It is
    already implemented in the latest versions of =dig= since version
    BIND 9.16.4. Some DNS resolver on the Internet (like Cloudflare) do
