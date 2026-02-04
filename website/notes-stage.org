@@ -33,9 +33,9 @@ Click on images to zoom in.
 
 ** Introduction
 
- * what is your interest in DNS?
- * what is your prior knowledge of DNS?
- * what do you want to learn about DNS?
+ * What is your interest in DNS?
+ * What is your prior knowledge of DNS?
+ * What do you want to learn about DNS?
 
 ** Virtual machines for the training lab                           :noexport:
 
@@ -57,21 +57,22 @@ Click on images to zoom in.
       reasons discussed in the Internet Draft /Terminology, Power, and
       Inclusive Language in Internet-Drafts and RFCs/:
       https://tools.ietf.org/html/draft-knodel-terminology
-  * in this document, and in configuration examples, we are using the
+  * In this document, and in configuration examples, we are using the
     new terms =primary= (instead of =master=) and =secondary= (instead
     of =slave=) whenever possible.
   * BIND 9 has started adopting the new terms with BIND 9.14, however
     the transition is not complete, and some terms in configuration
     statements still use the old terms. This will change with
     future releases
-    - if you use an older version of BIND 9, please substitute the new
+    - If you use an older version of BIND 9, please substitute the new
       terms for the older ones
-  * the old terminology will also be found in older books and
+  * The old terminology will also be found in older books and
     standards documents (RFCs and Internet Drafts)
   * DNS terminology can be confusing and is sometimes overloaded. RFC
-    9499 /DNS terminology/ ( https://www.rfc-editor.org/rfc/rfc9499.html )
+    9499 /DNS terminology/ ( https://tools.ietf.org/html/rfc9499 )
     tries to collect and document the current usage of DNS
     terminology.
+
 
 * DNS Basics - how the protocol works                              :noexport:
 ** from HOSTS.TXT to DNS
