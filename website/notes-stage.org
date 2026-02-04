@@ -2107,7 +2107,7 @@ $ORIGIN zoneNNN.dnslab.org.
 dns-main   30 IN A   192.0.2.100
 www        30 IN CNAME @
 #+END_EXAMPLE
-*** Result in memory
+*** The zone in memory
 #+BEGIN_EXAMPLE
 zoneNNN.dnslab.org.		   30 IN SOA	 (
                                         dns-main.zoneNNN.dnslab.org.
@@ -2210,37 +2210,34 @@ def               300 IN AAAA 2001:db8::dab
    - using this algorithm, BIND 9 uses the fastest authoritative from
      the set, while still probing all others from time to time
 
-@@html:<h2>@@Day 3@@html:</h2>@@
-
-* a quick look at DNSSEC                                           :noexport:
+* A quick look at DNSSEC                                           :noexport:
 ** DNS Security (or lack of)
- * the classic DNS from 1983 was not designed with security in mind
+ * The classic DNS from 1983 was not designed with security in mind
  * DNS cache poisoning  [[./img/0205-dns-dangers.png]]
  * Men-in-the-Middle data spoofing [[./img/0206-dns-dangers.png]]
- * changes to the client DNS resolver configuration [[./img/0207-dns-dangers.png]]
- * attacks of authoritative DNS servers  [[./img/0208-dns-dangers.png]]
+ * Changes to the client DNS resolver configuration [[./img/0207-dns-dangers.png]]
+ * Attacks of authoritative DNS servers  [[./img/0208-dns-dangers.png]]
  * DNSSEC can help  [[./img/0210-roadsign.png]]
 ** DNSSEC
- * the DNS security extension DNSSEC secures DNS data by augmenting
+ * The DNS security extension DNSSEC secures DNS data by augmenting
    the data with cryptographic signatures
-   - the owner (administrator) creates a key pair of private and
+   - The owner (administrator) creates a key pair of private and
      public key for each DNS zone (asymmetric crypto)
-   - the owner/administrator signs all DNS data with the
+   - The owner/administrator signs all DNS data with the
      private key
-   - the recipient of the data (DNS resolvers or client operating
+   - The recipient of the data (DNS resolvers or client operating
      system or application) will verify (validate) the data
-     + that the data has not been changed on the server nor during
+     + That the data has not been changed on the server nor during
        transit
-     + that the data comes from the correct owner (the owner of the
+     + That the data comes from the correct owner (the owner of the
        private key)
-** the chain of trust in DNS
+** The chain of trust in DNS
  * DNSSEC creates a chain of trust between the parent zone and the
    child zone
  [[./img/dnssec-chain-of-trust.png]]
  * Applications and DNS resolvers can follow the chain of trust to a
    configured trust anchor to validate the DNS data
- * we will look into DNSSEC in more details later in this course* DNSSEC Intro                                                     :noexport:
-
+ * We will look into DNSSEC in more details later in this course* DNSSEC Intro                                                     :noexport:
  * In DNSSEC, each zone has one or more key pairs.
    - The private key of each pair
      + Is stored securely (probably on a hidden primary)
@@ -2250,12 +2247,10 @@ def               300 IN AAAA 2001:db8::dab
      + It should be public
      + Is stored in the zone data, as a DNSKEY record
      + Is used to verify zone data
-
  * A private key signs the hashes of each RRSet in a zone.
  * The public key is accessible through a standard RR.
    - Recursive servers or clients query for the public key RR in order to decrypt a hash.
    - The RR is known as the DNSKEY and covered below.
-
 ** DNSSEC key algorithms
 
  | Algorithm     | Note                                                                                            |
@@ -2268,7 +2263,6 @@ def               300 IN AAAA 2001:db8::dab
  | ECC-GOST      | used in Russia                                                                                  |
  | ECDSA         | small signatures, read ECDSA and DNSSEC: http://blog.apnic.net/2014/10/23/ecdsa-and-dnssec/     |
  | ED448/ED25519 | new, not widely supported [[https://tools.ietf.org/html/rfc8080][RFC 8080]] / [[https://tools.ietf.org/html/rfc8032][RFC 8032 Edwards-Curve Digital Signature Algorithm (EdDSA)]] |
-
 
 ** DNSSEC records
 *** RRSIG
@@ -2288,20 +2282,19 @@ def               300 IN AAAA 2001:db8::dab
 {{{slides(RRSIG-record,9)}}}
 
 {{{exercise-start}}}
- * work on the DNS resolver machine
- * ask for the DNSSEC signature of =dnssec.works NS=:
+ * Work on the DNS resolver machine
+ * Ask for the DNSSEC signature of =dnssec.works NS=:
 #+BEGIN_EXAMPLE
 dig dnssec.works NS +dnssec +multi
 #+END_EXAMPLE
- * answer these questions into the chat
-   - which algorithm is this zone using? check the number against
+ * Answer these questions into the chat
+   - Which algorithm is this zone using? check the number against
      [[https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml][IANA Domain Name System Security (DNSSEC) Algorithm Numbers]]
-   - when does the signature expire?
-   - when did the signature become valid?
+   - When does the signature expire?
+   - When did the signature become valid?
 {{{exercise-end}}}
 
 *** DNSKEY
-
  * The public key of a DNSSEC key pair is stored in a DNSKEY RR.
    - The private key is not publicly available or accessible through DNS.
  * DNSKEY RRs are stored in the zone they can verify.
@@ -2311,43 +2304,43 @@ dig dnssec.works NS +dnssec +multi
 {{{slides(DNSKEY-record,4)}}}
 
 {{{exercise-start}}}
- * work on the DNS resolver machine
- * ask for the DNSSEC keys of =dnsworkshop.cz=:
+ * Work on the DNS resolver machine
+ * Ask for the DNSSEC keys of =dnsworkshop.cz=:
    #+BEGIN_EXAMPLE
    $ dig dnsworkshop.cz DNSKEY +dnssec +multi
    #+END_EXAMPLE
- * answer these questions into the chat
-   - which algorithm is this zone using?
-   - compare the size of keys and signature with the zone
+ * Answer these questions into the chat
+   - Which algorithm is this zone using?
+   - Compare the size of keys and signature with the zone
      =dnssec.works=
-   - write in the chat the sizes of both DNS answer messages as
+   - Write in the chat the sizes of both DNS answer messages as
      reported by =dig=
 {{{exercise-end}}}
 
 *** DS Record
  * The Delegation Signer (DS) record holds the hash of the
    Key-Signing-Key of a DNSSEC signed child zone.
-   - it is used to verify that the KSK has not been replaced without
+   - It is used to verify that the KSK has not been replaced without
      permission
-   - the DS record is usually submitted to the parent zone operator
+   - The DS record is usually submitted to the parent zone operator
      via a web-based or API system implemented by the domain reseller
      (registrar)
-     + this interface can become a target for attacker that want to
+     + This interface can become a target for attacker that want to
        change data in a DNSSEC signed zone and should be protected
        (two factor signon, registry lock etc).
 
 {{{slides(DS-record,4)}}}
 
 {{{exercise-start}}}
- * work on the DNS resolver machine
- * ask for the DNSSEC delegation signer of =isc.org=:
+ * Work on the DNS resolver machine
+ * Ask for the DNSSEC delegation signer of =isc.org=:
    #+BEGIN_EXAMPLE
    dig isc.org DS +dnssec +multi
    #+END_EXAMPLE
- * answer these questions into the chat
-   - which algorithm is this zone using?
-   - what is the current key-id of the KSK in the zone =isc.org=?
-   - what hashing algorithm is used for the DS record of =isc.org=
+ * Answer these questions into the chat
+   - Which algorithm is this zone using?
+   - What is the current key-id of the KSK in the zone =isc.org=?
+   - What hashing algorithm is used for the DS record of =isc.org=
      [[https://www.iana.org/assignments/ds-rr-types/ds-rr-types.xhtml][check against Delegation Signer (DS) Resource Record (RR) Type Digest Algorithms]]?
 {{{exercise-end}}}
 
@@ -2369,18 +2362,18 @@ dig dnssec.works NS +dnssec +multi
 
 * KSK and ZSK                                                      :noexport:
  * DNSSEC often uses two keys to simplify the management of the chain of trust
-   - a Key-Signing-Key (KSK) that is stable and large (and harder to attack)
+   - A Key-Signing-Key (KSK) that is stable and large (and harder to attack)
      + The KSKs hash is stored as a DS record in the parent zone
      + Changing the KSK requires coordination with the operator of the
        parent zone (often the Top-Level-Domain)
-   - a Zone-Signing-Key (ZSK) that secures all the resource records in the zone
+   - A Zone-Signing-Key (ZSK) that secures all the resource records in the zone
      + The ZSK can be more lightweight because it can be changed
        (rolled) at anytime, there is no dependency to an external
        party (the parent zone)
    - The KSK signs the ZSK to create the chain of trust from the parent via the KSK towards the ZSK
      + =DS (parent) -> KSK (zone) -> ZSK (zone) -> Data (Signature)=
-* easy DNSSEC with BIND 9.16 "default-policy"                      :noexport:
- * using DNSSEC policy configuration (available since BIND 9.16.0)
+* Easy DNSSEC with BIND 9.16 "default-policy"                      :noexport:
+ * Using DNSSEC policy configuration (available since BIND 9.16.0)
    makes DNSSEC easy to deploy
  * BIND automatically creates the DNSSEC keys, signs the zone and
    keeps the signatures updated
@@ -2389,12 +2382,12 @@ dig dnssec.works NS +dnssec +multi
    key will have an unlimited lifetime (no key rollover).
 ** DNSSEC signing the zone
 {{{exercise-start}}}
- * we work on the primary authoritative server =nsNNNa.dnslab.org=
- * become root
+ * We work on the primary authoritative server =nsNNNa.dnslab.org=
+ * Become root
    #+BEGIN_EXAMPLE
    $ sudo -s
    #+END_EXAMPLE
- * open the file =/etc/named.conf= in an editor
+ * Open the file =/etc/named.conf= in an editor
    and add a =dnssec-policy default;= line to the zone block:
    #+BEGIN_EXAMPLE
    zone "zoneNNN.dnslab.org" {
@@ -2403,48 +2396,48 @@ dig dnssec.works NS +dnssec +multi
      dnssec-policy	default;
    };
    #+END_EXAMPLE
- * check the configuration and reload BIND 9
+ * Check the configuration and reload BIND 9
    #+BEGIN_EXAMPLE
    % named-checkconf -z
    % rndc reconfig
    #+END_EXAMPLE
- * you should now see key files and additional zone-files in the BIND
+ * You should now see key files and additional zone-files in the BIND
    9 home directory
    #+BEGIN_EXAMPLE
    % ls -l /var/named
    #+END_EXAMPLE
- * test if the DNS server returns DNSSEC resource records
+ * Test if the DNS server returns DNSSEC resource records
    #+BEGIN_EXAMPLE
    $ dig @localhost zoneNNN.dnslab.org +dnssec +multi
    $ dig @localhost zoneNNN.dnslab.org DNSKEY +dnssec +multi
    #+END_EXAMPLE
- * check that the new DNSSEC signed zone has been synchronized to the secondary
+ * Check that the new DNSSEC signed zone has been synchronized to the secondary
    #+BEGIN_EXAMPLE
    $ dig zoneNNN.dnslab.org +nssearch
    #+END_EXAMPLE
- * resolve a domain name
+ * Resolve a domain name
    =zoneNNN.dnslab.org= from your zone on your resolver machine. Does
    it show the =AD=-Flag? What might be missing? Write the answer in
    the chat.
 {{{exercise-end}}}
-* completing the DNSSEC chain of trust                             :noexport:
- * for DNSSEC to work we need to complete the chain of trust from the
+* Completing the DNSSEC chain of trust                             :noexport:
+ * For DNSSEC to work we need to complete the chain of trust from the
    parent zone to our zone
- * the /Delegation-Signer/ record containing the secure hash of the
+ * The /Delegation-Signer/ record containing the secure hash of the
    key-signing-key needs to be published in the parent zone
 {{{exercise-start}}}
- * work on the authoritative primary server (=nsNNNa.dnslab.org=)
- * generate the DS-Record for the KSK of your zone
+ * Work on the authoritative primary server (=nsNNNa.dnslab.org=)
+ * Generate the DS-Record for the KSK of your zone
    #+BEGIN_EXAMPLE
    % dnssec-dsfromkey /var/named/KzoneNNN.dnslab.org.+013+zzzzz.key
    #+END_EXAMPLE
- * copy and paste the output of the above command in the chat, so that
+ * Copy and paste the output of the above command in the chat, so that
    the trainer (as the operator of the parent zone) can publish the
    record in the parent zone
- * wait for the DS-Record to appear in the parent zone, then test
+ * Wait for the DS-Record to appear in the parent zone, then test
    DNSSEC validation again from your resolver machine. Does the
    =AD=-Flag now appear?
- * if not, there might be a =NOERROR= / =NODATA= for the =DS= record of
+ * If not, there might be a =NOERROR= / =NODATA= for the =DS= record of
    the zone cached. Clear the cache of your DNS resolver with =rndc
    flush= and try again.
 {{{exercise-end}}}
@@ -2490,15 +2483,15 @@ dig dnssec.works NS +dnssec +multi
    #+END_EXAMPLE
 ** Exercise
 {{{exercise-start}}}
- * work on the primary authoritative server (=nsNNNa.dnslab.org=)
- * add a =TXT= record to your =zoneNNN.dnslab.org= zonefile, increment
+ * Work on the primary authoritative server (=nsNNNa.dnslab.org=)
+ * Add a =TXT= record to your =zoneNNN.dnslab.org= zonefile, increment
    the =SOA= serial number
    #+BEGIN_EXAMPLE
    zoneNNN.dnslab.org.      IN TXT "This is just some random text"
    #+END_EXAMPLE
- * check the zone for syntax errors with =named-checkzone=, reload the
+ * Check the zone for syntax errors with =named-checkzone=, reload the
    new zone
- * check the log files on the primary and on the secondary server for
+ * Check the log files on the primary and on the secondary server for
    zone transfer activity. From the log file, how long did it take
    between reload and the zone transfer? Write the answer in the chat.
 {{{exercise-end}}}
@@ -2538,46 +2531,46 @@ dig dnssec.works NS +dnssec +multi
 
 * Security Best Practices                                          :noexport:
  * Keep your BIND 9 software up-to-date
-   - use the package manager of your Linux/Unix distribution
-     + configure automatic unattended updates
-     + consider using the ISC supplied BIND 9 packages
-   - or use a cross-platform package manager
+   - Use the package manager of your Linux/Unix distribution
+     + Configure automatic unattended updates
+     + Consider using the ISC supplied BIND 9 packages
+   - Or use a cross-platform package manager
      + pkgsrc — https://www.pkgsrc.org
      + Nix — https://nixos.org/nix/
- * subscribe to BIND 9 announce mailing list (low volume, new
+ * Subscribe to BIND 9 announce mailing list (low volume, new
    versions and security announcements
    only) https://lists.isc.org/mailman/listinfo/bind-announce
 ** Separating authoritative and recursive DNS
- * authoritative DNS server and DNS resolver are separate functions in the DNS infrastructure
-   - they have different security requirements
- * while BIND 9 can operate in "hybrid" mode (default), it is strongly
+ * Authoritative DNS server and DNS resolver are separate functions in the DNS infrastructure
+   - They have different security requirements
+ * While BIND 9 can operate in "hybrid" mode (default), it is strongly
    recommended to separate the two functions
-   - can run on the same hardware with operating system containers or virtualisation
- * benefits of separate authoritative and recursive DNS
-   - required for DNSSEC validation of own zones
-   - security configuration optimised for the function (for example query ACLs)
-   - helps troubleshooting (logging)
-   - easier maintenance (Updates)
-** process isolation
- * isolate the BIND 9 DNS server process from the operating system and
+   - Can run on the same hardware with operating system containers or virtualisation
+ * Benefits of separate authoritative and recursive DNS
+   - Required for DNSSEC validation of own zones
+   - Security configuration optimised for the function (for example query ACLs)
+   - Helps troubleshooting (logging)
+   - Easier maintenance (Updates)
+** Process isolation
+ * Isolate the BIND 9 DNS server process from the operating system and
    other applications
-   - reduces the impact of a security breach
-  * classic Unix operating systems offer the chroot function to
+   - Reduces the impact of a security breach
+  * Classic Unix operating systems offer the chroot function to
     isolate a process into its own filesystem-tree
-    - while many security tutorials still explain chroot, it might not
+    - While many security tutorials still explain chroot, it might not
       be the best option available today
-    - modern systems offer much richer isolation functions:
+    - Modern systems offer much richer isolation functions:
       + Linux container (LXC/LXD, Docker, Podman, systemd-nspawn, Firejail)
       + Linux GRSecurity Kernel enhanced "chroot"
         (https://grsecurity.net/features.php)
       + FreeBSD jails
       + Solaris/Illumnos "zones"
 ** DNSSEC validation
- * classic DNS is vulnerable to a large number of attacks on the
+ * Classic DNS is vulnerable to a large number of attacks on the
    content of DNS answers
  * DNSSEC (digital signatures on DNS data) guards against many of
    these attacks
- * the DNS root-zone, all gTLDs and nTLDs and many ccTLDs are DNSSEC
+ * The DNS root-zone, all gTLDs and nTLDs and many ccTLDs are DNSSEC
    signed
    - many second level domains are also DNSSEC secured
  * BIND 9 comes with a trust-anchor for the Internet Root-Zone built-in
@@ -2587,8 +2580,8 @@ dig dnssec.works NS +dnssec +multi
            dnssec-validation auto;
    };
    #+END_EXAMPLE
- * enable DNSSEC validation on a DNS resolver
- * test that DNSSEC validation is enabled:
+ * Enable DNSSEC validation on a DNS resolver
+ * Test that DNSSEC validation is enabled:
    #+BEGIN_EXAMPLE
    % rndc validation check
    DNSSEC validation is enabled (view _default)
@@ -2603,12 +2596,12 @@ dig dnssec.works NS +dnssec +multi
  * RFC 1034 defines the additional section in a DNS answer as
    "Carries RRs which may be helpful in using the RRs in the other
    sections."
-   - in the default configuration, BIND 9 tries to be very helpful,
+   - In the default configuration, BIND 9 tries to be very helpful,
      sending additional information …
    - … creating larger than needed DNS answer packets
-   - this is sometimes exploited by attackers in distributed denial of
+   - This is sometimes exploited by attackers in distributed denial of
      service attacks
- * configure "minimal-responses" in BIND 9
+ * Configure "minimal-responses" in BIND 9
    #+BEGIN_EXAMPLE
    options {
       minimal-responses yes;
@@ -2621,13 +2614,13 @@ dig dnssec.works NS +dnssec +multi
  [[./img/0801-minimal-responses.png]]
 
 ** Minimal ANY
- * a BIND 9 server getting an query with type ANY (QTYPE 255) will
+ * A BIND 9 server getting an query with type ANY (QTYPE 255) will
    answer with all records matching the requested domain name and
    class
-   - this can create large UDP DNS answer packets
- * starting with BIND 9.11, BIND 9 can be configured to only return
+   - This can create large UDP DNS answer packets
+ * Starting with BIND 9.11, BIND 9 can be configured to only return
    the first entry of an matching ANY query
-   - this mitigates the problem without causing breakage of older
+   - This mitigates the problem without causing breakage of older
      software (qmail etc)
    #+BEGIN_EXAMPLE
    options {
@@ -2638,25 +2631,25 @@ dig dnssec.works NS +dnssec +multi
 * DNS reverse resolution                                           :noexport:
  * A-Records and AAAA-Records map domain names to IPv4 and IPv6
    addresses
- * sometimes we want to map IP addresses back to their domain names
+ * Sometimes we want to map IP addresses back to their domain names
  * DNS offers this function, it is called /reverse lookup/
- * reverse lookup is *optional* except where required by protocol
+ * Reverse lookup is *optional* except where required by protocol
    (=X11= authentication) or custom (Anti-Spam checks for SMTP mail)
-** reverse records
- * for reverse DNS lookup, the IP address must be converted into a
+** Reverse records
+ * For reverse DNS lookup, the IP address must be converted into a
    domain name (because in DNS the query index is always a domain
    name)
-   - in IP addresses, the hierarchy is from left to right (network
+   - In IP addresses, the hierarchy is from left to right (network
      part on the left of an IP address, host part on the right)
-   - in domain names, the hierarchy is from right to left (Root-Zone
+   - In domain names, the hierarchy is from right to left (Root-Zone
      and Top-Level domain on the right, host part on the left)
-   - to map an IP address to a domain name, we reverse the order of
+   - To map an IP address to a domain name, we reverse the order of
      all digits of the address, and add the second level domains
      =in-addr.arpa.= (IPv4) or =ip6.arpa= (IPv6)
-     + for IPv4 = =192.0.2.100= -> =100.2.0.192.in-addr.arpa.=
-     + for IPv6 = =2001:db8:ff::1= ->
+     + For IPv4 = =192.0.2.100= -> =100.2.0.192.in-addr.arpa.=
+     + For IPv6 = =2001:db8:ff::1= ->
        =1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.F.F.0.0.8.B.D.0.1.0.0.2.IP6.ARPA=
-  - the domain name for an IP address is stored as a =PTR= (Pointer)
+  - The domain name for an IP address is stored as a =PTR= (Pointer)
     record with the domain name in the record data
 #+BEGIN_EXAMPLE
 132.0.2.192.IN-ADDR.ARPA.    3600 IN PTR www.example.com.
@@ -2677,7 +2670,7 @@ dig dnssec.works NS +dnssec +multi
    #+BEGIN_EXAMPLE
    $ dig -x 192.168.1.36
    #+END_EXAMPLE
- * is the same as
+ * Is the same as
    #+BEGIN_EXAMPLE
    $ dig 36.1.168.192.in-addr.arpa PTR
    #+END_EXAMPLE
@@ -2698,28 +2691,28 @@ dig dnssec.works NS +dnssec +multi
 
 ** Exercise
 {{{exercise-start}}}
- * work on the primary authoritative server (=nsNNNa.dnslab.org=)
- * create a new zone file for the fictional IPv4 network in the
+ * Work on the primary authoritative server (=nsNNNa.dnslab.org=)
+ * Create a new zone file for the fictional IPv4 network in the
    picture below
    [[./img/0803-reverse-delegation-lab.png]]
- * the picture only shows the hostname label of the domain name. You
+ * The picture only shows the hostname label of the domain name. You
    need to add the forward domains name =zoneNNN.dnslab.org.= to the
    names. Example: Host =beta= is =beta.zoneNNN.dnslab.org.=. Ignore the
    "alias" names shown in the picture.
- * the "Home" directory for BIND 9 is
+ * The "Home" directory for BIND 9 is
    =/var/named=
- * add a zone block for this network to your BIND 9 configuration file
+ * Add a zone block for this network to your BIND 9 configuration file
    =named.conf= on =nsNNNa=.
  * *bonus*: create a zone file and add a zone block for the second
    network in the picture =10.0.10.in-addr.arpa=
- * check the zonefile and the configuration for errors
- * reload the BIND 9 DNS server
- * test if the zone can be reached
+ * Check the zonefile and the configuration for errors
+ * Reload the BIND 9 DNS server
+ * Test if the zone can be reached
    #+BEGIN_EXAMPLE
    $ dig @nsNNNa.dnslab.org 1.168.192.in-addr.arpa.
    $ dig @nsNNNa.dnslab.org 20.1.168.192.in-addr.arpa. PTR
    #+END_EXAMPLE
- * can it be reached via delegation? Write the answer in the chat
+ * Can it be reached via delegation? Write the answer in the chat
    #+BEGIN_EXAMPLE
    $ dig -x 192.168.1.1
    #+END_EXAMPLE
@@ -2750,25 +2743,25 @@ dig dnssec.works NS +dnssec +multi
     };
     #+END_EXAMPLE
 * DNS and DNSSEC Monitoring                                        :noexport:
-** why DNSSEC monitoring
- * a DNS infrastructure with DNSSEC signed zones is more fragile
-   - more complex configuration
-   - most errors are fatal, the zone cannot be resolved anymore (this
+** Why DNSSEC monitoring
+ * A DNS infrastructure with DNSSEC signed zones is more fragile
+   - More complex configuration
+   - Most errors are fatal, the zone cannot be resolved anymore (this
      is a security feature of DNSSEC!)
  * DNSSEC monitoring helps to detect issues before the DNS service is
    affected
 ** Monitoring scripts
- * Men & Mice has compiled 15 essential monitoring test scripts
-   - these scripts are simple (Bourne-) shell scripts that should work
+ * We have compiled 15 essential monitoring test scripts
+   - These scripts are simple (Bourne-) shell scripts that should work
      on any Unix/Linux system (and on Windows 10 with Linux-Sub-System
      or Windows with Cygwin)
-   - the scripts are available in the Men & Mice Services Github repos
-      https://github.com/menandmice-services/dns-monitoring-scripts
+   - The scripts are available in this Github repo:
+     https://github.com/cstrotm/dns-monitoring-scripts
    - Please send pull-requests for fixes and additions
- * the scripts are deliberately simple
- * each script takes one input parameter
+ * The scripts are deliberately simple
+ * Each script takes one input parameter
    - the domain-name of a delegated zone
- * the scripts can be used from a cron-job
+ * The scripts can be used from a cron-job
    - or embedded into an monitoring system.
 ** DNS-Server tests
 
@@ -3136,11 +3129,11 @@ dig dnssec.works NS +dnssec +multi
    exit ${err}
    #+END_EXAMPLE
 ** DNSSEC Monitoring tips
- * the DNSSEC monitoring system should write an audit trail of DNSSEC zone changes:
-   - changes to the DNSKEY records (KEY-ID and SOA Serial of the change)
-   - changes to the DS-Record (KEY-ID and SOA serial of the parent
+ * The DNSSEC monitoring system should write an audit trail of DNSSEC zone changes:
+   - Changes to the DNSKEY records (KEY-ID and SOA Serial of the change)
+   - Changes to the DS-Record (KEY-ID and SOA serial of the parent
      zone)
-** DNSSEC Monitoring - tools
+** DNSSEC Monitoring - Tools
  * DNSSEC tools from .SE TLD: https://github.com/dotse/dnssec-monitor
  * Verisign jdnssec-tools http://www.verisignlabs.com/dnssec-tools/
  * YAZVS — Yet Another Zone Validation Script http://yazvs.verisignlabs.com/
@@ -3214,9 +3207,9 @@ dig dnssec.works NS +dnssec +multi
 
 {{{slides(Stub-Zone,18)}}}
 
-** an example stub zone configuration
- * stub zones are configured in the =named.conf= of a DNS resolver
- * the backup file is optional and will be created
+** An example stub zone configuration
+ * Stub zones are configured in the =named.conf= of a DNS resolver
+ * The backup file is optional and will be created
    #+BEGIN_EXAMPLE
    zone "private.dns.zone.example" {
      type stub;
@@ -3226,10 +3219,10 @@ dig dnssec.works NS +dnssec +multi
    #+END_EXAMPLE
 ** Exercise
 {{{exercise-start}}}
- * work on the DNS resolver machine =dnsrNNN=
- * our reverse zone is currently not reachable from the DNS resolver
+ * Work on the DNS resolver machine =dnsrNNN=
+ * Our reverse zone is currently not reachable from the DNS resolver
    - because it is not delegated from the root DNS zone down
- * add a stub zone for the reverse zone we've created on the
+ * Add a stub zone for the reverse zone we've created on the
    authoritative servers
    #+BEGIN_EXAMPLE
    zone "1.168.192.in-addr.arpa" {
@@ -3238,8 +3231,8 @@ dig dnssec.works NS +dnssec +multi
      file "1.168.192.in-addr.arpa.stubzone";
    };
    #+END_EXAMPLE
- * check and reload the configuration
- * check that the backup file of the stub-zone is created
+ * Check and reload the configuration
+ * Check that the backup file of the stub-zone is created
    #+BEGIN_EXAMPLE
    % cat /var/named/1.168.192.in-addr.arpa.stubzone
    $ORIGIN .
@@ -3254,7 +3247,7 @@ dig dnssec.works NS +dnssec +multi
    			NS	nsNNNa.dnslab.org.
    			NS	nsNNNb.dnslab.org.
    #+END_EXAMPLE
- * you should now be able to directly resolve IP addresses to names on
+ * You should now be able to directly resolve IP addresses to names on
    the DNS resolver (and all clients of that resolve can do that as
    well)
    #+BEGIN_EXAMPLE
