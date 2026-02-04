@@ -1107,11 +1107,11 @@ dnslab.org. 86400 IN SOA (
      devices etc)
    - DNS resolver (also named "Caching Server", "Smart Resolver",
      "recursive DNS Server"
-   - authoritative DNS Server
+   - Authoritative DNS Server
 
 ** DNS Resolver placement
 
- * in managed networks (company, university) the IT department manages
+ * In managed networks (company, university) the IT department manages
    one or more dedicated DNS resolvers
 
  [[./img/0401-resolver-placement.png]]
@@ -1120,11 +1120,11 @@ dnslab.org. 86400 IN SOA (
    provided by the ISP
  [[./img/0402-resolver-placement.png]]
 
- * although sometimes problematic from privacy and security point
+ * Although sometimes problematic from privacy and security point
    of view, many users today use public DNS resolvers in the Internet
  [[./img/0403-resolver-placement.png]]
 
- * some operating systems support operating a full DNS resolver on
+ * Some operating systems support operating a full DNS resolver on
    each system
  [[./img/0404-resolver-placement.png]]
 
@@ -1135,68 +1135,68 @@ dnslab.org. 86400 IN SOA (
    servers (one primary, multiple secondaries holding copies of the zone
    database)
 
-* building and maintaining a DNS Resolver                          :noexport:
-** installing BIND 9 from the RedHat/CentOS Repository
+* Building and maintaining a DNS Resolver                          :noexport:
+** Installing BIND 9 from the RedHat/CentOS Repository
 {{{exercise-start}}}
- * inform the trainer in the chat when you're done
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * become /root/ (Password =DNSandBIND=)
+ * Inform the trainer in the chat when you're done
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Become /root/ (Password =DNSandBIND=)
    #+BEGIN_EXAMPLE
    $ sudo -s
    #+END_EXAMPLE
- * install the BIND 9 DNS server software
+ * Install the BIND 9 DNS server software
    #+BEGIN_SRC
    % dnf install bind9.16
    #+END_SRC
- * start BIND 9 with the default (RedHat/CentOS 8) configuration. The
+ * Start BIND 9 with the default (RedHat/CentOS 8) configuration. The
    BIND 9 process name is =named= for /Name Daemon/
    #+BEGIN_EXAMPLE
    % systemctl enable --now named
    #+END_EXAMPLE
- * check that BIND 9 is running without errors
+ * Check that BIND 9 is running without errors
    #+BEGIN_EXAMPLE
    % systemctl status named
    #+END_EXAMPLE
- * try if our BIND 9 works as a DNS resolver
+ * Try if our BIND 9 works as a DNS resolver
    #+BEGIN_EXAMPLE
    $ dig @localhost debian.org
    #+END_EXAMPLE
- * repeat the last query again
+ * Repeat the last query again
  * Please send the answer to this question to the chat:
-  - what is the answer time for the 1st request?
-  - what is the answer time for the 2nd request?
-  - guess what causes the difference?
-  - try to query =dnslab.org=: why is the 1st query to
+  - What is the answer time for the 1st request?
+  - What is the answer time for the 2nd request?
+  - Guess what causes the difference?
+  - Try to query =dnslab.org=: why is the 1st query to
     =dnslab.org= faster than the (previous) query for =debian.org=?
 {{{exercise-end}}}
 ** Basic BIND 9 configuration
- * the BIND 9 configuration on RedHat/CentOS systems is in
+ * The BIND 9 configuration on RedHat/CentOS systems is in
    =/etc/named.conf=. Other Unix/Linux systems might store the
    configuration file in a different place (like =/etc/bind= on
    Debian/Ubuntu)
-** default RedHat/CentOS 8 configuration
+** Default RedHat/CentOS 8 configuration
 
  [[./img/0501-named-conf.png]]
 
  [[./img/0502-named-conf.png]]
 
-** check the configuration
- * after changing the BIND 9 configuration file, and *before*
+** Check the configuration
+ * After changing the BIND 9 configuration file, and *before*
    activating the new configuration, we need to check the new
    configuration for any errors
    #+BEGIN_EXAMPLE
    % named-checkconf
    #+END_EXAMPLE
- * only if no errors are reported reload/reconfig the DNS server
- * reload with the BIND 9 =rndc= tool
+ * Only if no errors are reported reload/reconfig the DNS server
+ * Reload with the BIND 9 =rndc= tool
    #+BEGIN_EXAMPLE
    % rndc reconfig
    #+END_EXAMPLE
- * reload with =systemctl=
+ * Reload with =systemctl=
    #+BEGIN_EXAMPLE
    % systemctl reload named
    #+END_EXAMPLE
- * reload /old Unix style/
+ * Reload /old Unix style/
    #+BEGIN_EXAMPLE
    % pkill -HUP named
    #+END_EXAMPLE
@@ -1204,35 +1204,35 @@ dnslab.org. 86400 IN SOA (
  [[./img/0503-rndc-status.png]]
 
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * execute =rndc status=
- * compare your values with the screenshot above
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Execute =rndc status=
+ * Compare your values with the screenshot above
  * Find the names of the automatic empty zones in the BIND 9 log
    journal
    #+BEGIN_EXAMPLE
    % journalctl -u named
    #+END_EXAMPLE
- * how many zones are configured? Write the answer in the chat.
+ * How many zones are configured? Write the answer in the chat.
 {{{exercise-end}}}
 
 * BIND 9 Logging                                                   :noexport:
- * in BIND 9, the administrator defines the /channel/ (where to log)
+ * In BIND 9, the administrator defines the /channel/ (where to log)
    and the /categories/ (what to log) and then connects the categories
    to the channels
  * Categories
-   - security
-   - xfer-in (incoming zone transfer)
-   - xfer-out (outgoing zone transfer)
-   - queries
-   - dnssec
-   - default
+   - =security=
+   - =xfer-in= (incoming zone transfer)
+   - =xfer-out= (outgoing zone transfer)
+   - =queries=
+   - =dnssec=
+   - =default=
    - [...]
  * Categories: 28 in BIND 9.12; 23 in BIND 9.10 (includes default)
  * Channel
-  - syslog
-  - files
-  - null
-  - stderr
+  - =syslog=
+  - =files=
+  - =null=
+  - =stderr=
 
 {{{slides(BIND-Logging,4)}}}
 
@@ -1248,20 +1248,6 @@ dnslab.org. 86400 IN SOA (
          category unmatched { null; };
    };
    #+END_EXAMPLE
-** Query-Logging
- * Example BIND 9 query logging (BIND 9.16.21)
-#+begin_example
-2021-11-10T11:49:36.349 info: client @0x770784d4 192.0.2.38#55719 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212) [ECS 100.64.149.0/24/0]
-2021-11-10T11:49:38.915 info: client @0x770784d4 100.64.15.30#40121 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)DC (192.0.2.212)
-2021-11-10T11:49:39.195 info: client @0x770784d4 192.0.2.38#20977 (doh.defaultroutes.de): query: doh.defaultroutes.de IN AAAA -E(0)DC (192.0.2.212)
-2021-11-10T11:49:39.347 info: client @0x770784d4 100.64.1.244#63082 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212)
-2021-11-10T11:49:41.455 info: client @0x770784d4 192.0.2.34#38949 (mailop.org): query: mailop.org IN A -E(0)DC (192.0.2.212) [ECS 100.64.2.0/24/0]
-2021-11-10T11:49:41.809 info: client @0x770784d4 192.0.2.85#14795 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212)
-#+end_example
- * The fields in one line of query log data
-   [[./img/query-logging.png]]
-
-
 ** A logging template for a DNS resolver
 
 #+BEGIN_EXAMPLE
@@ -1360,7 +1346,7 @@ logging {
         category spill       { capacity_channel;};
 };
 #+END_EXAMPLE
-*** Query-Logging
+** Query-Logging
  * Example BIND 9 query logging (BIND 9.16.21)
 #+begin_example
 2021-11-10T11:49:36.349 info: client @0x770784d4 192.0.2.38#55719 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212) [ECS 100.64.149.0/24/0]
@@ -1410,7 +1396,7 @@ logging {
    #+END_EXAMPLE
 
 {{{exercise-end}}}
-** TODO explain query log format                                   :noexport:
+
 * Cache Maintenance                                                :noexport:
  * =dumpdb=: Dump BIND’s cache and/or zones to the file
    =named_dump.db=. It can be changed with the =dump-file= statement.
@@ -1426,10 +1412,10 @@ logging {
  * =flushtree <domainname>=: removes everything under the domain name
    from the server's cache. =rndc flushtree example.com=
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * write the content of the BIND DNS server's memory cache to a file with =rndc dumpdb=
- * find the file (look at =named.conf= for the dump-file) and open the file in a text editor.
- * inspect the file content. Do you find some domain names from previous DNS queries there?
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Write the content of the BIND DNS server's memory cache to a file with =rndc dumpdb=
+ * Find the file (look at =named.conf= for the dump-file) and open the file in a text editor.
+ * Inspect the file content. Do you find some domain names from previous DNS queries there?
 {{{exercise-end}}}
 
 * Debug Logging                                                    :noexport:
@@ -1451,10 +1437,10 @@ logging {
    default file is =named.recursing=. It can be changed with the
    =recursing-file= statement. =rndc recursing=
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * write the content of the BIND DNS server's memory cache to a file with =rndc dumpdb=
- * find the file (look at =named.conf= for the dump-file) and open the file in a text editor.
- * inspect the file content. Do you find some domain names from previous DNS queries there?
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Write the content of the BIND DNS server's memory cache to a file with =rndc dumpdb=
+ * Find the file (look at =named.conf= for the dump-file) and open the file in a text editor.
+ * Inspect the file content. Do you find some domain names from previous DNS queries there?
 {{{exercise-end}}}
 
 * Troubleshooting DNS                                              :noexport:
@@ -1487,13 +1473,13 @@ logging {
     #+END_EXAMPLE
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * install =lsof=: =dnf install lsof=
- * list all processes that listen on port 53 (DNS)
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Install =lsof=: =dnf install lsof=
+ * List all processes that listen on port 53 (DNS)
     #+BEGIN_EXAMPLE
     % lsof -Poni :53
     #+END_EXAMPLE
- * how many ports are open on your machine? Write the result in the
+ * How many ports are open on your machine? Write the result in the
    chat.
 {{{exercise-end}}}
 ** Troubleshooting with "dig"
@@ -1503,7 +1489,7 @@ logging {
    - =+tcp= - use TCP instead of UDP for queries
    - =+norecurse= - Do not set the "RD" bit on outbound query
    - =+multiline= - produce output in multi-line (extended) format
-** external tools
+** External tools
  * DNS looking glasses are web interfaces for querying.
    - Like =dig=, they are DNS admin tools.
    - They can succeed when dig fails.
@@ -1526,12 +1512,12 @@ logging {
      on location.
  * Other options:
    - https://toolbox.googleapps.com/apps/dig
-   - https://digdns.com ANY only, but many other tools included and good output.
+   - https://digdns.com =ANY= only, but many other tools included and good output.
 * Turning off answers from the CHAOS class                         :noexport:
- * by default, BIND 9 answers queries to internal information in the
+ * By default, BIND 9 answers queries to internal information in the
    CHAOS class (a network class not used in production anymore and
    repurposed for internet DNS server data)
- * the DNS queries in the chaos class are
+ * The DNS queries in the chaos class are
    - =dig @<server> ch TXT version.bind= - asking for the BIND 9 server software
      version
    - =dig @<server> ch TXT authors.bind= - asking for the list of BIND 9
@@ -1542,7 +1528,7 @@ logging {
      asking for the servers ID (see [[https://tools.ietf.org/html/rfc4892][RFC 4892 Requirements for a
      Mechanism Identifying a Name Server Instance]] and [[https://tools.ietf.org/html/rfc5001][DNS Name Server
      Identifier (NSID) Option]]
- * example query with NSID
+ * Example query with NSID
    #+BEGIN_EXAMPLE
    $ dig +nsid google.com
 
@@ -1580,38 +1566,38 @@ logging {
       hostname none;
    };
    #+END_EXAMPLE
-* local DNS resolver configuration                                 :noexport:
- * we work on the virtual machine for the DNS resolver (=dnsrNNN.dnslab.org=)
- * we want to change the operating system's network configuration so
+* Local DNS resolver configuration                                 :noexport:
+ * We work on the virtual machine for the DNS resolver (=dnsrNNN.dnslab.org=)
+ * We want to change the operating system's network configuration so
    that our BIND 9 DNS resolver is now used by default (the
    instructions below are CentOS/RedHat Linux specific. Other
    Unix/Linux versions have different configuration files for their
    local resolver configuration)
 {{{exercise-start}}}
- * list the network configuration on NetworkManager
+ * List the network configuration on NetworkManager
    #+begin_example
    % nmcli con show
    NAME         UUID                                  TYPE      DEVICE
    System eth0  5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03  ethernet  eth0
    #+end_example
- * configure NetworkManager to use the DNS resolver running on loopback
+ * Configure NetworkManager to use the DNS resolver running on loopback
    #+begin_example
    % nmcli con mod "System eth0" ipv4.ignore-auto-dns yes
    % nmcli con mod "System eth0" ipv6.ignore-auto-dns yes
    % nmcli con mod "System eth0" ipv4.dns "127.0.0.1"
    % nmcli con mod "System eth0" ipv6.dns "::1"
    #+end_example
- * activate the new NetworkManager configuration. When working over
+ * Activate the new NetworkManager configuration. When working over
    SSH or from the Web-Terminal, these two commands must be executed
    together (else the network connection will be gone)
    #+begin_example
    % nmcli con down "System eth0" && nmcli con up "System eth0"
    #+end_example
- * check that the new configuration is now in =/etc/resolv.conf=
+ * Check that the new configuration is now in =/etc/resolv.conf=
    #+begin_example
    % cat /etc/resolv.conf
    #+end_example
- * should output
+ * Should output
    #+BEGIN_SRC
    nameserver 127.0.0.1
    nameserver ::1
@@ -1623,11 +1609,11 @@ logging {
    % echo "nameserver 127.0.0.1" > /etc/resolv.conf
    % chattr +i /etc/resolv.conf
 #+END_EXAMPLE
- * test the DNS resolver for DNSSEC validation (AD-Flag!)
+ * Test the DNS resolver for DNSSEC validation (AD-Flag!)
    #+BEGIN_EXAMPLE
    $ dig dnssec.works +adflag +multi
    #+END_EXAMPLE
- * expected output:
+ * Expected output:
    #+BEGIN_SRC
    ; <<>> DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el8 <<>> dnssec.works +adflag +multi
    ;; global options: +cmd
@@ -1652,10 +1638,10 @@ logging {
 * Install BIND 9 for the primary authoritative server              :noexport:
 
 {{{exercise-start}}}
- * work on the =nsNNNa.dnslab.org= virtual machine (primary
+ * Work on the =nsNNNa.dnslab.org= virtual machine (primary
    authoritative server). This is a new VM, different from the DNS
    resolver machine!
- * enable sudo
+ * Enable sudo
    #+BEGIN_EXAMPLE
    $ sudo -s
    #+END_EXAMPLE
@@ -1663,13 +1649,13 @@ logging {
 #   #+BEGIN_EXAMPLE
 #   % dnf install bind9.16
 #   #+END_EXAMPLE
- * the BIND 9 configuration file for the BIND 9 is in
+ * The BIND 9 configuration file for the BIND 9 is in
    =/etc/named.conf=. It is very minimal!
- * enable and start ISC BIND 9
+ * Enable and start ISC BIND 9
    #+BEGIN_EXAMPLE
    % systemctl enable --now named
    #+END_EXAMPLE
- * lets tweak the configuration file
+ * Lets tweak the configuration file
    =/etc/named.conf= for an authoritative-only
    DNS server
    #+BEGIN_EXAMPLE
@@ -1693,7 +1679,7 @@ logging {
    	      };
    };
    #+END_EXAMPLE
- * logging for the authoritative server
+ * Logging for the authoritative server
    #+BEGIN_EXAMPLE
    logging {
            channel default_syslog {
@@ -1752,15 +1738,15 @@ logging {
            category rate-limit     { ratelimit; };
    };
    #+END_EXAMPLE
- * test the configuration
+ * Test the configuration
    #+BEGIN_EXAMPLE
    % named-checkconf
    #+END_EXAMPLE
- * reload/reconfig the BIND 9 configuration
+ * Reload/reconfig the BIND 9 configuration
    #+BEGIN_EXAMPLE
    % rndc reconfig
    #+END_EXAMPLE
- * open port 53 (DNS) in the firewall
+ * Open port 53 (DNS) in the firewall
    #+BEGIN_EXAMPLE
    % firewall-cmd --permanent --zone=public --add-service=dns
    % firewall-cmd --reload
@@ -1793,7 +1779,7 @@ logging {
  * This adds robustness and allows secondaries that can't reach the primary
    (perhaps because of a firewall).
 *** named.conf Syntax Check
- * the tool =named-checkconf= checks the syntax of the main
+ * The tool =named-checkconf= checks the syntax of the main
    configuration file =named.conf=
  * Usage:  =named-checkconf [filename]=
  * The default file is =named.conf= in the sysconfdir when =named= was
@@ -1804,19 +1790,19 @@ logging {
 /etc/named.conf:14: missing ';' before end of file
 #+END_EXAMPLE
  * =named-checkconf -z= also checks primary zone files.
-** setting up a DNS zone
+** Setting up a DNS zone
 {{{exercise-start}}}
- * next we need a zonefile for our new zone. The zone-name will be
+ * Next we need a zonefile for our new zone. The zone-name will be
    =zoneNNN.dnslab.org=. The authoritative name-server is named
    =nsNNNa.dnslab.org=.
- * the ISC BIND 9 home-directory is at
+ * The ISC BIND 9 home-directory is at
    =/var/named=. Use the zone template
    below (replace the =NNN= with your attendee number) to create a new
    zonefile with the filename =zoneNNN.dnslab.org= in the BIND 9 home
    directory. Having a low TTL of 60 seconds *is* important in our lab
    environment. For production environments, the recommendation is
    3600 seconds (1 hour) as a default TTL.
- * the period =.= at the end of domain names *is* very important in
+ * The period =.= at the end of domain names *is* very important in
    zone files. Don't omit it.
  * Display the IPv4 and IPv6 addresses of a Linux-Server
    #+BEGIN_EXAMPLE
@@ -1832,7 +1818,7 @@ logging {
    zoneNNN.dnslab.org.             IN A      <ipv4-address-of-the-lab-server>
    zoneNNN.dnslab.org.             IN AAAA   <ipv6-address-of-the-lab-server>
    #+END_EXAMPLE
- * create a zone block in the =named.conf= file
+ * Create a zone block in the =named.conf= file
    (=/etc/named.conf=)
    #+BEGIN_EXAMPLE
    [...]
@@ -1841,60 +1827,60 @@ logging {
      file "zoneNNN.dnslab.org";
    };
    #+END_EXAMPLE
- * test the configuration *and* the zonefile(s) with parameter =-z=
+ * Test the configuration *and* the zonefile(s) with parameter =-z=
    (for /Zones/)
    #+BEGIN_EXAMPLE
    % named-checkconf -z
    #+END_EXAMPLE
- * reload/reconfig the BIND 9 configuration
+ * Reload/reconfig the BIND 9 configuration
    #+BEGIN_EXAMPLE
    % rndc reconfig
    #+END_EXAMPLE
- * test if the zone resolves
-   - on the authoritative DNS server
+ * Test if the zone resolves
+   - On the authoritative DNS server
      #+BEGIN_EXAMPLE
      $ dig @localhost zoneNNN.dnslab.org
      #+END_EXAMPLE
-  - on your BIND 9 resolver machine (=dnsrNNN.dnslab.org=)
+  - On your BIND 9 resolver machine (=dnsrNNN.dnslab.org=)
      #+BEGIN_EXAMPLE
      $ dig @nsNNNa.dnslab.org zoneNNN.dnslab.org
      #+END_EXAMPLE
 {{{exercise-end}}}
 
-** getting your domain delegation
- * for proper zone delegation, the parent zone of your zone must have
+** Getting your domain delegation
+ * For proper zone delegation, the parent zone of your zone must have
    one NS records per authoritative server (currently one) pointing
    towards this server
- * the parent zone is =dnslab.org= and is operated by the trainer (lucky
+ * The parent zone is =dnslab.org= and is operated by the trainer (lucky
    coincidence)
 {{{exercise-start}}}
- * copy the NS-records of your zone file in the chat
- * wait for the NS record in the parent zone to appear (response in
+ * Copy the NS-records of your zone file in the chat
+ * Wait for the NS record in the parent zone to appear (response in
    the chat from the trainer)
- * test the new zone from your DNS resolver machine
+ * Test the new zone from your DNS resolver machine
    #+BEGIN_EXAMPLE
    $ dig zoneNNN.dnslab.org
    #+END_EXAMPLE
- * trace the delegation from the root zone down to your zone with
+ * Trace the delegation from the root zone down to your zone with
    #+BEGIN_EXAMPLE
    $ dig zoneNNN.dnslab.org +trace
    #+END_EXAMPLE
- * use the web based delegation checker on your zone
+ * Use the web based delegation checker on your zone
    - DNS Delegation Information: https://www.buddyns.com/delegation-lab
    - Trace DNS delegation https://simpledns.plus/lookup-dg
    - DNS Bajaj http://www.zonecut.net/dns/
 {{{exercise-end}}}
 
-* resilience - one or more secondary servers                       :noexport:
- * currently your zone only has one authoritative server
- * that is a single point of failure
- * to fix this, we install another BIND 9 server
+* Resilience - one or more secondary servers                       :noexport:
+ * Currently your zone only has one authoritative server
+ * That is a single point of failure
+ * To fix this, we install another BIND 9 server
 
-** building a second authoritative server
+** Building a second authoritative server
 {{{exercise-start}}}
- * work on the 2nd authoritative server machine (=nsNNNb.dnslab.org=)
- * we want to create a new secondary server
- * become root
+ * Work on the 2nd authoritative server machine (=nsNNNb.dnslab.org=)
+ * We want to create a new secondary server
+ * Become root
    #+BEGIN_EXAMPLE
    $ sudo -s
    #+END_EXAMPLE
@@ -1902,13 +1888,13 @@ logging {
 #   #+BEGIN_EXAMPLE
 #   % dnf install bind9.16
 #   #+END_EXAMPLE
- * the BIND 9 configuration file for the BIND 9 is in
+ * The BIND 9 configuration file for the BIND 9 is in
    =/etc/named.conf=. It is very minimal!
- * enable and start ISC BIND 9
+ * Enable and start ISC BIND 9
    #+BEGIN_EXAMPLE
    % systemctl enable --now named
    #+END_EXAMPLE
- * let's tweak the configuration file
+ * Let's tweak the configuration file
    =/etc/named.conf= for an authoritative-only
    DNS server
    #+BEGIN_EXAMPLE
@@ -1932,7 +1918,7 @@ logging {
    	   };
    };
    #+END_EXAMPLE
- * logging for the authoritative server
+ * Logging for the authoritative server
    #+BEGIN_EXAMPLE
    logging {
            channel default_syslog {
@@ -1991,25 +1977,25 @@ logging {
            category rate-limit     { ratelimit; };
    };
    #+END_EXAMPLE
- * test the configuration
+ * Test the configuration
    #+BEGIN_EXAMPLE
    % named-checkconf
    #+END_EXAMPLE
- * open the firewall for DNS
+ * Open the firewall for DNS
    (port 53)
    #+BEGIN_EXAMPLE
    % firewall-cmd --permanent --zone=public --add-service=dns
    % firewall-cmd --reload
    #+END_EXAMPLE
- * reload/reconfig the BIND 9 configuration
+ * Reload/reconfig the BIND 9 configuration
    #+BEGIN_EXAMPLE
    % rndc reconfig
    #+END_EXAMPLE
- * test that zone transfer from the primary works
+ * Test that zone transfer from the primary works
    #+BEGIN_EXAMPLE
    $ dig @nsNNNa.dnslab.org zoneNNN.dnslab.org AXFR
    #+END_EXAMPLE
- * now we create a zone block for a secondary zone in =named.conf=
+ * Now we create a zone block for a secondary zone in =named.conf=
    #+BEGIN_EXAMPLE
    [...]
    zone "zoneNNN.dnslab.org" {
@@ -2018,33 +2004,33 @@ logging {
     primaries { <ipv6-address-of-primary-server>; <ipv4-address-of-primary-server>; };
    };
    #+END_EXAMPLE
- * test the BIND 9 configuration
+ * Test the BIND 9 configuration
    #+BEGIN_EXAMPLE
    % named-checkconf -z
    #+END_EXAMPLE
- * reload/reconfig the configuration
+ * Reload/reconfig the configuration
    #+BEGIN_EXAMPLE
    % rndc reconfig
    #+END_EXAMPLE
- * check if the zone file for the secondary zone has been created by a
+ * Check if the zone file for the secondary zone has been created by a
    zone transfer
    #+BEGIN_EXAMPLE
    % ls -l /var/named
    #+END_EXAMPLE
- * our second server should now also be authoritative for this zone
+ * Our second server should now also be authoritative for this zone
    (=AA= Flag)
    #+BEGIN_EXAMPLE
    $ dig @localhost zoneNNN.dnslab.org SOA
    #+END_EXAMPLE
- * try to look into the new zone file. Does it work?
+ * Try to look into the new zone file. Does it work?
    #+BEGIN_EXAMPLE
    % less /var/named/zoneNNN.dnslab.org
    #+END_EXAMPLE
- * since BIND 9.8 secondary zones are stored in a binary format. This
+ * Since BIND 9.8 secondary zones are stored in a binary format. This
    speeds up saving and loading zone content on very large zones (>
    10000 resource records). The binary format cannot be read without
    extra tooling
- * it is possible to configure BIND 9 to write secondary zones in the text
+ * It is possible to configure BIND 9 to write secondary zones in the text
    format (was default in BIND 9 before 9.8)
    #+BEGIN_EXAMPLE
    zone "zoneNNN.dnslab.org" {
@@ -2054,29 +2040,29 @@ logging {
     masterfile-format text;
    };
    #+END_EXAMPLE
- * test configuration file and reload/reconfig the BIND 9 server
+ * Test configuration file and reload/reconfig the BIND 9 server
    #+BEGIN_EXAMPLE
    % named-checkconf -z
    % rndc reconfig
    #+END_EXAMPLE
- * re-transfer the zone
+ * Re-transfer the zone
    #+BEGIN_EXAMPLE
    % rndc retransfer zoneNNN.dnslab.org
    #+END_EXAMPLE
- * list zone file content (should now work!)
+ * List zone file content (should now work!)
    #+BEGIN_EXAMPLE
    % less /var/named/zoneNNN.dnslab.org
    #+END_EXAMPLE
 {{{exercise-end}}}
-** fixing the delegation
- * now we have a second authoritative DNS server for our zone
- * but it is not listed in the zone, nor in the delegation. So it will
+** Fixing the delegation
+ * Now we have a second authoritative DNS server for our zone
+ * But it is not listed in the zone, nor in the delegation. So it will
    not be found by external DNS resolvers
- * we need to fix this
+ * We need to fix this
 {{{exercise-start}}}
- * work on the authoritative primary (=nsNNNa.dnslab.org=)
- * add the second DNS server to the NS record set of your DNS zone
- * don't forget to increment the SOA serial number
+ * Work on the authoritative primary (=nsNNNa.dnslab.org=)
+ * Add the second DNS server to the NS record set of your DNS zone
+ * Don't forget to increment the SOA serial number
    #+BEGIN_EXAMPLE
    $TTL 60
    zoneNNN.dnslab.org.    IN SOA    nsNNNa.dnslab.org.  (
@@ -2087,19 +2073,19 @@ logging {
    zoneNNN.dnslab.org.    IN A      161.35.224.95
    zoneNNN.dnslab.org.    IN AAAA   2604:a880:4:1d0::40:0
    #+END_EXAMPLE
- * check the zone configuration and reload the BIND 9 server (primary)
- * check on the primary and the secondary that the new zone has been
+ * Check the zone configuration and reload the BIND 9 server (primary)
+ * Check on the primary and the secondary that the new zone has been
    transferred over to the secondary (check the =transfer.log= file)
- * inform the operator of the parent zone (the trainer) that the new
+ * Inform the operator of the parent zone (the trainer) that the new
    secondary is fully operational and paste the NS record for the new
    server in the chat window
- * wait for the new NS record to appear in the parent zone
- * on the DNS resolver machine =dnsrNNN.dnslab.org=, test that the
+ * Wait for the new NS record to appear in the parent zone
+ * On the DNS resolver machine =dnsrNNN.dnslab.org=, test that the
    resolver sees both authoritative servers
    #+BEGIN_EXAMPLE
    $ dig zoneNNN.dnslab.org +nssearch
    #+END_EXAMPLE
- * do you see which server is responding faster?
+ * Do you see which server is responding faster?
 {{{exercise-end}}}
 
 * Master Zone File Shortcuts                                       :noexport:
