@@ -3164,7 +3164,7 @@ dig dnssec.works NS +dnssec +multi
      #+end_example
    * Run our /Prometheus/ installer script
      #+begin_example
-     % prom-setup
+     %/usr/local/bin/ prom-setup
      * Downloading bind_exporter software ..
      * Downloading prometheus software ..
      * Reconfiguring named ..
