@@ -2540,14 +2540,15 @@ dig dnssec.works NS +dnssec +multi
  * These are most useful for your authoritative zones.
  * Some checkers are broken, outdated, or simply bad.
  * Two are excellent and recommended:
-    - https://zonemaster.net (alternative: https://zonemaster.iis.se)
-    - https://dnsviz.net
+   - https://zonemaster.net (alternative: https://zonemaster.iis.se)
+   - https://dnsviz.net
+   - https://dnsaudit.io
 ** Exercise
 {{{exercise-start}}}
- * use the external website checkers above to check your
+ * Use the external website checkers above to check your
    =zoneNNN.dnslab.org= zone
- * try to understand the output
- * are there any errors reported? Warnings? Recommendations?
+ * Try to understand the output
+ * Are there any errors reported? Warnings? Recommendations?
 {{{exercise-end}}}
 
 * Security Best Practices                                          :noexport:
