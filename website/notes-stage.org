@@ -296,6 +296,10 @@ dig @f.root-servers.net AXFR .
    - =localhost=: to avoid conflict with the use of the (single label)
      hostname =localhost= in Unix/Linux systems
    - =example.com=, =example.net= and =example.org= are also reserved.
+   - =.internal= is a new reserved TLD that ICANN has reserved for
+     internal use. This domain is similar to RFC 1912 private IPv4
+     addresses. (Internet Draft: [[https://datatracker.ietf.org/doc/html/draft-davies-internal-tld][A Top-level Domain for Private Use]])
+
  * special use domains: pre-internet networks have used domain names
    not registered (=.bitnet=, =.csnet=, =.uucp=). Also newer
    technologies are using non-registered gTLDs:
@@ -1233,7 +1237,7 @@ dnslab.org. 86400 IN SOA (
 
 {{{slides(BIND-Logging,4)}}}
 
-** default Logging
+** Default Logging
  * If =named.conf= has no logging statement, BIND essentially defaults to use syslog.
  * The default configuration is:
    #+BEGIN_EXAMPLE
@@ -1245,8 +1249,21 @@ dnslab.org. 86400 IN SOA (
          category unmatched { null; };
    };
    #+END_EXAMPLE
+** Query-Logging
+ * Example BIND 9 query logging (BIND 9.16.21)
+#+begin_example
+2021-11-10T11:49:36.349 info: client @0x770784d4 192.0.2.38#55719 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212) [ECS 100.64.149.0/24/0]
+2021-11-10T11:49:38.915 info: client @0x770784d4 100.64.15.30#40121 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)DC (192.0.2.212)
+2021-11-10T11:49:39.195 info: client @0x770784d4 192.0.2.38#20977 (doh.defaultroutes.de): query: doh.defaultroutes.de IN AAAA -E(0)DC (192.0.2.212)
+2021-11-10T11:49:39.347 info: client @0x770784d4 100.64.1.244#63082 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212)
+2021-11-10T11:49:41.455 info: client @0x770784d4 192.0.2.34#38949 (mailop.org): query: mailop.org IN A -E(0)DC (192.0.2.212) [ECS 100.64.2.0/24/0]
+2021-11-10T11:49:41.809 info: client @0x770784d4 192.0.2.85#14795 (doh.defaultroutes.de): query: doh.defaultroutes.de IN A -E(0)D (192.0.2.212)
+#+end_example
+ * The fields in one line of query log data
+   [[./img/query-logging.png]]
 
-** a logging template for a DNS resolver
+
+** A logging template for a DNS resolver
 
 #+BEGIN_EXAMPLE
 logging {
