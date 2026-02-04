@@ -1,0 +1,4 @@
+#+Title: DNS BIND Jumpstart Training
+#+Author: Jan-Piet Mens & Carsten Strotmann
+#+Date: <2026-02-04 Wed>
+#+Language: de

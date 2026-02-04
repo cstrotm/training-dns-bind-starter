@@ -1,0 +1,6 @@
+# to create /tmp/notes.pdf from notes.org in THIS directory,
+# launch runoff.sh in THIS directory
+
+../../t-infra/asciidoc/runoff.sh linuxhotel
+../../t-infra/asciidoc/runoff.sh mnm
+../../t-infra/asciidoc/runoff.sh none

@@ -1,0 +1,104 @@
+#+Title: DNS & BIND 9 Starter Online Training
+#+Author: Jan-Piet Mens & Carsten Strotmann
+#+Date: <2026-02-04 Wed>
+#+HTML_HEAD: <link href="css/bootstrap.css" rel="stylesheet"><script src="js/jquery.js"></script><script src="js/bootstrap.js"></script>
+#+HTML_HEAD_EXTRA: <meta http-equiv="refresh" content="30">
+#+TAGS: noexport(e)
+
+# Set the :noexport: tag with CTRL+C - CTRL+C e RETURN
+# Clear the :noexport: tag with CTRL+C - CTRL+C SPC RETURN
+# Toggle the :noexport: tag with CTRL+C - CTRL+C e RETURN
+
+* Training Logistics
+
+This page contains information for attendees of the online
+training *DNS & BIND Starter*.
+
+** Notes
+ * the training notes and all training materials can be found at
+   https://jump.dnslab.org/notes.html
+
+** Training Content
+
+*** Day 1
+
+  *  DNS Basics - how the protocol works
+  *  a quick look at DNSSEC
+  *  querying the DNS with "dig"
+  *  DNS Clients, DNS Resolver and Authoritative Server
+  *  building and maintaining a DNS Resolver
+  *  BIND 9 Logging
+  *  Troubleshooting DNS
+
+*** Day 2
+
+  *  getting your own domain delegation
+  *  setting up a DNS zone
+  *  resilience - one or more secondary servers
+  *  easy DNSSEC with BIND 9.16 "default-policy"
+  *  completing the DNSSEC chain of trust
+  *  DNS Server maintenance
+
+*** Day 3
+
+  *  Security Best Practices
+  *  DNS server monitoring
+  *  Questions and Answers
+
+** Zoom
+
+For the audio and video during this training we use the
+video conferencing platform "Zoom".
+
+You will receive an invitation for registration in a separate e-mail.
+
+To join the training on Zoom, you need a modern web-browser on a
+desktop or laptop computer, either based on the Chromium engine
+(Chromium, Google Chrome, Brave, Vivaldi, Edge) or Firefox. We
+recommend to take a test drive of the application using a headset
+(Microphone and headphone) and your web-camera at
+https://zoom.us/test before the training starts.
+
+We restrict the number of participants in our online training to 10
+attendees. Our trainer can help each attendee individually. To be able
+to support you during the training, the trainer needs to be able to
+see you through the camera.
+
+*IMPORTANT:* having a setup with two (or more) computer monitors during
+the training can greatly ease the training workflow, as you can keep
+the video conference system visible on one monitor and work on
+training related tasks on a second monitor. A (large screen)
+smartphone or tablet might also work as a second screen for the video
+conference.
+
+Link to the Zoom conference room [TBA]
+
+** Access to the training lab
+
+We will provide a virtual machine with CentOS 8 Linux for every
+attendee of the training. Access to the virtual machine is possible
+through a modern web-browser (Firefox, Chrome(ium), Brave, Vivaldi, MS
+Edge, Safari). Please ensure your Web browser can access an arbitrary
+external host via HTTPS to port =9090=. You can also access the training
+lab with an SSH client from macOS, Linux, *BSD, or from Windows with
+Putty, MobaXterm, or similar client.
+
+** Internet access:
+
+If your Internet access works for video streaming (Netflix, Amazon,
+Disney, Apple etc), it is sufficient for our training as well.
+
+** Schedule
+
+We activate the online training system 30 minutes before the training
+is scheduled to start. Then we will publish the access URL address(es)
+of the virtual server and the link to our video conferencing system.
+
+Please use the time to login and get familiar with the setup. The
+training starts in time on the hour.
+
+The training hours are 3:00pm to 06:00pm CET and 7:00pm to 10:00pm CET.
+
+We are always available for you via mail <training@menandmice.com>
+
+Have an inspiring training
