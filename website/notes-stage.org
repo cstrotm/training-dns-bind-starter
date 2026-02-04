@@ -399,11 +399,11 @@ dig @f.root-servers.net AXFR .
    - *RData*: record data, the data that is attached to the domain
      name. Depending on the type of record, the RData can have one to
      many fields
- * we find DNS resource records
-  - in DNS zone database files on authoritative DNS servers
-  - in the caches of DNS resolver servers
-  - in the output of a DNS query and troubleshooting tools
- * on the wire, the data is transported in binary form (non readable
+ * We find DNS resource records
+  - In DNS zone database files on authoritative DNS servers
+  - In the caches of DNS resolver servers
+  - In the output of a DNS query and troubleshooting tools
+ * On the wire, the data is transported in binary form (non readable
    for humans)
  * DNS tools convert the DNS resource records from binary form into
    text form for human consumption
@@ -823,7 +823,7 @@ dnslab.org. 86400 IN SOA (
       _sip._tcp.example.com.  3600 IN SRV 0 25 5060 sip2.example.com.
       _sip._tcp.example.com.  3600 IN SRV 0 25 5060 sip3.example.com.
       #+end_example
-   - different values for /weight/, but same result:
+   - Different values for /weight/, but same result:
       #+begin_example
       _sip._tcp.example.com.  3600 IN SRV 0 2 5060 sip1.example.com.
       _sip._tcp.example.com.  3600 IN SRV 0 1 5060 sip2.example.com.
@@ -848,23 +848,23 @@ dnslab.org. 86400 IN SOA (
 * querying the DNS with "dig"                                      :noexport:
  * =dig= is the standard tool to send DNS queries.
  * It replaces the older (and obsolete =nslookup=)
- * the output of =dig= resembles the structure of DNS packets on the wire
+ * The output of =dig= resembles the structure of DNS packets on the wire
  [[./img/0302-DNS-Components-DNS-packet.png]]
  * The =dig= output explained
  [[./img/0301-dig-command.png]]
- * the DNS data is separated in sections
+ * The DNS data is separated in sections
  [[./img/0302-dig-command.png]]
 ** Exercise
 {{{exercise-start}}}
- * login to your virtual lab machine
- * install the =dig= tool
+ * Login to your virtual lab machine
+ * Install the =dig= tool
    #+BEGIN_EXAMPLE
    % sudo dnf install bind-utils
    #+END_EXAMPLE
- * use =dig= to answer the following questions. Please send the answer
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-    - what is the IPv4 address of =ftp.isc.org=? use =dig ftp.isc.org=
-    - what is the IPv6 address of =ftp.isc.org=? use =dig AAAA ftp.isc.org=
+    - What is the IPv4 address of =ftp.isc.org=? use =dig ftp.isc.org=
+    - What is the IPv6 address of =ftp.isc.org=? use =dig AAAA ftp.isc.org=
 {{{exercise-end}}}
 ** DNS Packet Header
  [[./img/0303-dig-command.png]]
@@ -913,21 +913,21 @@ dnslab.org. 86400 IN SOA (
    [[https://tools.ietf.org/html/rfc6891][RFC 6891 Extension Mechanisms for DNS (EDNS(0))]]
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-    - what is the returncode of =dig dns.google.com=
-    - what flags are set on this query?
-    - what is the QUERY-ID?
-    - how many records are in the answer section?
+    - What is the returncode of =dig dns.google.com=
+    - What flags are set on this query?
+    - What is the QUERY-ID?
+    - How many records are in the answer section?
 {{{exercise-end}}}
 ** Extended DNS OPT Section
  [[./img/0304-dig-command.png]]
  * EDNS Version 0 is the current version
    - new Versions are being discussed in the IETF
- * additional EDNS flags. =DO= - DNSSEC OK, this DNS client supports
+ * Additional EDNS flags. =DO= - DNSSEC OK, this DNS client supports
    DNSSEC records
- * maximum UDP answer packet size in byte as negotiated between =dig=
+ * Maximum UDP answer packet size in byte as negotiated between =dig=
    and the DNS server/resolver. Current default is 4096, must be
    between 512 and 4096. The default changed to 1232 on [[https://dnsflagday.net/2020/][/DNS flag day
    2020/]]
@@ -941,10 +941,10 @@ dnslab.org. 86400 IN SOA (
 
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-   - what is the maximum allowed UDP answer size in bytes for =dig
+   - What is the maximum allowed UDP answer size in bytes for =dig
      @ns8.dnssec.works ch txt hostname.bind=?
 {{{exercise-end}}}
 
@@ -954,31 +954,31 @@ dnslab.org. 86400 IN SOA (
    one or more DNS resource records that match the query
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-   - how many MX mailservers does the domain =twitter.com= have? Try
+   - How many MX mailservers does the domain =twitter.com= have? Try
      =dig twitter.com MX=
 {{{exercise-end}}}
 
 ** Authority Section
   [[./img/0306-dig-command.png]]
- * if present, the authority section contains the authoritative name
+ * If present, the authority section contains the authoritative name
    server that hosts the content delivered in the answer. For negative
    (NXDOMAIN/NOERROR-NODATA) answers, the authority section contains
    the SOA record of the zone that is authoritative for the negative answer.
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-   - how many authoritative name-servers does the domain =twitter.com=
+   - How many authoritative name-servers does the domain =twitter.com=
      have? Use a similar query as in the previous exercise
 {{{exercise-end}}}
 
 ** Additional Section
   [[./img/0307-dig-command.png]]
- * if present, the additional section contains additional DNS records
+ * If present, the additional section contains additional DNS records
    that have not been explicitly requested, but might help in the name
    resolution process. Because the additional section can be misused
    in attacks, modern DNS server software minimizes the additional
@@ -988,10 +988,10 @@ dnslab.org. 86400 IN SOA (
    pseudo-section
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-   - how many records show in the additional section for the following
+   - How many records show in the additional section for the following
      =dig= query?
      #+BEGIN_EXAMPLE
      $ dig MX hetzner.company
@@ -999,41 +999,41 @@ dnslab.org. 86400 IN SOA (
 {{{exercise-end}}}
 ** Footer
   [[./img/0308-dig-command.png]]
- * the footer contains the size (in bytes) of the answer packet, the
+ * The footer contains the size (in bytes) of the answer packet, the
    DNS server that has send the answer, the time it took to receive
    the answer and the time and date of the
    DNS communication
 *** Exercise
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * use =dig= to answer the following questions. Please send the answer
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Use =dig= to answer the following questions. Please send the answer
    to the chat:
-   - how many bytes is the answer packet for =dig TXT twitter.com=?
-   - which server delivers the answer?
+   - How many bytes is the answer packet for =dig TXT twitter.com=?
+   - Which server delivers the answer?
 {{{exercise-end}}}
-** sending the query to a specific DNS server/resolver
+** Sending the query to a specific DNS server/resolver
   [[./img/0309-dig-command.png]]
- * usually =dig= sends the query to the DNS resolver configured in the
+ * Usually =dig= sends the query to the DNS resolver configured in the
    operating system (file =/etc/resolv.conf= on Unix/Linux)
- * with the =@= syntax the query can be sent to other DNS servers
+ * With the =@= syntax the query can be sent to other DNS servers
    (resolver or authoritative server)
-** sending non-recursive queries
+** Sending non-recursive queries
   [[./img/0310-dig-command.png]]
- * command line switches can alter the query sent by =dig=.
+ * Command line switches can alter the query sent by =dig=.
    - =+multi= formats the output in human readable form (wrapped for
      80 column terminal)
    - =+norec= sends a query without =RD= flag (/non-recursive/ or
      /iterative/ query)
-** asking for DNSSEC data
+** Asking for DNSSEC data
   [[./img/0311-dig-command.png]]
- * the switch =+dnssec= requests DNSSEC data from the upstream server
- * the switch =+cd= sends the =CD= (checking disabled) flag to disable
+ * The switch =+dnssec= requests DNSSEC data from the upstream server
+ * The switch =+cd= sends the =CD= (checking disabled) flag to disable
    upstream DNSSEC validation (if the target of the query is a DNS resolver)
 ** Zone-Transfer
   [[./img/0312-dig-command.png]]
  * =dig= can initiate a zone transfer from an authoritative server
    that contains the zone database (primary or secondary server)
- * the data is printed in the /Master Zone Format/ and can be used to
+ * The data is printed in the /Master Zone Format/ and can be used to
    start a new zone database file
  * *Example*: list top level domains with DNSSEC delegation:
    #+BEGIN_EXAMPLE
@@ -1048,52 +1048,52 @@ dnslab.org. 86400 IN SOA (
 
 * Exercise: recap from day one (10 Minutes)                        :noexport:
 {{{exercise-start}}}
- * use your virtual lab machine =dnsrNNN.dnslab.org=
- * work on the questions below; make a note in the chat
+ * Use your virtual lab machine =dnsrNNN.dnslab.org=
+ * Work on the questions below; make a note in the chat
    once you're done with this exercise
- * check the output of the =dig= command:
-   - which flags are set
-   - which resource records are in the different sections
-   - is the answer /authoritative/ (AA-Flag present)?
-   - is EDNS supported (EDNS OPT Pseudo-Section)?
-   - is there data in the ADDITIONAL section?
- * query for an IPv4 address
+ * Check the output of the =dig= command:
+   - Which flags are set
+   - Which resource records are in the different sections
+   - Is the answer /authoritative/ (AA-Flag present)?
+   - Is EDNS supported (EDNS OPT Pseudo-Section)?
+   - Is there data in the ADDITIONAL section?
+ * Query for an IPv4 address
    #+BEGIN_EXAMPLE
    $ dig www.dnsworkshop.org A
    #+END_EXAMPLE
- * query for an IPv6 address
+ * Query for an IPv6 address
    #+BEGIN_EXAMPLE
    $ dig www.dnsworkshop.org AAAA
    #+END_EXAMPLE
- * does an IPv4 and/or IPv6 address exist for =dnsworkshop.org=
+ * Does an IPv4 and/or IPv6 address exist for =dnsworkshop.org=
    (without =www=)?
- * does the domain name =ftp.dnsworkshop.org= exist?
- * what query does =dig= send when executed without any parameter?
+ * Does the domain name =ftp.dnsworkshop.org= exist?
+ * What query does =dig= send when executed without any parameter?
  * What do we see in the answer to this query? Is this a DNS answer?
    Is the answer /authoritative/?
    #+BEGIN_EXAMPLE
    $ dig @a.nic.de www.dnsworkshop.de A
    #+END_EXAMPLE
- * will this answer be received over UDP?
+ * Will this answer be received over UDP?
    #+BEGIN_EXAMPLE
    $ dig @9.9.9.9 larger.dnssec.works TXT +dnssec
    #+END_EXAMPLE
- * which order of the parameters to =dig= are valid? Check it out!
+ * Which order of the parameters to =dig= are valid? Check it out!
    #+BEGIN_EXAMPLE
    $ dig dnsworkshop.de SOA +multi
    $ dig +multi SOA dnsworkshop.de
    $ dig SOA +multi dnsworkshop.de
    $ dig dnsworkshop.de +multi SOA
    #+END_EXAMPLE
- * is there an /Additional Section/ in the answer for
+ * Is there an /Additional Section/ in the answer for
    #+BEGIN_EXAMPLE
    $ dig strotmann.de MX
    #+END_EXAMPLE
- * is there an /Additional Section/ in the answer for
+ * Is there an /Additional Section/ in the answer for
    #+BEGIN_EXAMPLE
    $ dig strotmann.de MX @ns3.myinfrastructure.org
    #+END_EXAMPLE
- * is there an /Additional Section/ in the answer for
+ * Is there an /Additional Section/ in the answer for
    #+BEGIN_EXAMPLE
    $ dig strotmann.de MX @ns5.myinfrastructure.org
    #+END_EXAMPLE
