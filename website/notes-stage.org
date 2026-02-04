@@ -622,11 +622,16 @@ dnslab.org. 86400 IN SOA (
   * The Happy Eyeball protocol addresses the problem when present:
     [[https://tools.ietf.org/html/rfc8305][RFC 8305: Happy Eyeballs Version 2: Better Connectivity Using Concurrency]]
 ** The HTTPS Record
-   * The =HTTPS= record is a relativly new record. It's type number is 65 (aka TYPE65)
+   * The =HTTPS= record is a relativly new record. It's type number is
+     65 (aka TYPE65)
      - It has been first observed "in the wild" in Summer 2020
-     - It is being used in the new Apple operating systems (iOS, iPadOS, macOS) since fall 2020
-     - It is now the 3rd most queried DNS record in the Internet (after =A= and =AAAA=)
-     - It is not yet (as of September 2021) an Internet Standard: [[https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-svcb-https][Service binding and parameter specification via the DNS (DNS SVCB and HTTPS RRs) draft-ietf-dnsop-svcb-https]]
+     - It is being used in the new Apple operating systems (iOS,
+       iPadOS, macOS) since fall 2020
+     - It is now the 3rd most queried DNS record in the Internet
+       (after =A= and =AAAA=)
+     - The HTTPS and SVCB records are discussed in RFC 9460 "Service
+       binding and parameter specification via the DNS (DNS SVCB and
+       HTTPS RRs)" https://datatracker.ietf.org/doc/html/rfc9460
    * The =HTTPS= delivers connection information for an HTTPS service
      - IPv4-Addresses of the service
      - IPv6-Addresses of the server
@@ -2731,7 +2736,7 @@ dig dnssec.works NS +dnssec +multi
    network in the picture =10.0.10.in-addr.arpa=
  * Check the zonefile and the configuration for errors
  * Reload the BIND 9 DNS server
- * Test if the zone can be reached
+ * Test if the zone can be resolved
    #+BEGIN_EXAMPLE
    $ dig @nsNNNa.dnslab.org 1.168.192.in-addr.arpa.
    $ dig @nsNNNa.dnslab.org 20.1.168.192.in-addr.arpa. PTR
@@ -2742,7 +2747,7 @@ dig dnssec.works NS +dnssec +multi
    #+END_EXAMPLE
 {{{exercise-end}}}
 ** Solution (Template)
- * Zonefile:
+ * Zonefile for reverse zone for network block 192.168.1.0/24:
    #+BEGIN_EXAMPLE
    $TTL 60
    $ORIGIN 1.168.192.in-addr.arpa.
@@ -3411,11 +3416,76 @@ zone "dnslab.org" {
 % tcpdump port 53 and host 9.9.9.9 or host 149.112.112.112
 tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
-15:34:03.721440 IP pdnsrNNN.dnslab.org.31778 > dns9.quad9.net.domain: 30694+% [1au] DS? www.dnslab.org. (45)
-15:34:03.733552 IP dns9.quad9.net.domain > pdnsrNNN.dnslab.org.31778: 30694$ 0/4/1 (500)
-15:34:03.733852 IP pdnsrNNN.dnslab.org.18160 > dns9.quad9.net.domain: 23994+% [1au] DNSKEY? dnslab.org. (41)
-15:34:03.742156 IP dns9.quad9.net.domain > pdnsrNNN.dnslab.org.18160: 23994$ 3/0/1 DNSKEY, DNSKEY, RRSIG (765)
-15:34:03.742854 IP pdnsrNNN.dnslab.org.22697 > dns9.quad9.net.domain: 57733+% [1au] A? www.dnslab.org. (45)
-15:34:03.929210 IP dns9.quad9.net.domain > pdnsrNNN.dnslab.org.22697: 57733$ 2/0/1 A 188.166.104.92, RRSIG (233)
+15:34:03.721440 IP dnsrNNN.dnslab.org.31778 > dns9.quad9.net.domain: 30694+% [1au] DS? www.dnslab.org. (45)
+15:34:03.733552 IP dns9.quad9.net.domain > dnsrNNN.dnslab.org.31778: 30694$ 0/4/1 (500)
+15:34:03.733852 IP dnsrNNN.dnslab.org.18160 > dns9.quad9.net.domain: 23994+% [1au] DNSKEY? dnslab.org. (41)
+15:34:03.742156 IP dns9.quad9.net.domain > dnsrNNN.dnslab.org.18160: 23994$ 3/0/1 DNSKEY, DNSKEY, RRSIG (765)
+15:34:03.742854 IP dnsrNNN.dnslab.org.22697 > dns9.quad9.net.domain: 57733+% [1au] A? www.dnslab.org. (45)
+15:34:03.929210 IP dns9.quad9.net.domain > dnsrNNN.dnslab.org.22697: 57733$ 2/0/1 A 188.166.104.92, RRSIG (233)
 #+END_EXAMPLE
+ * DNS Query to test the forward name resolution:
+#+BEGIN_EXAMPLE
+dig @localhost www.dnslab.org A
+#+END_EXAMPLE
+* Recursion-Depth -- changes to BIND 9 (and other DNS resolver) in October 2025 :noexport:
+ * Due to attacks on non-DNSSEC DNS zone in 2025, the authors of DNS
+   resolver software changed the processing of delegation /glue/
+   records:
+   - BIND now only trusts glue records if, in the associated NS
+     record, the target name (right side) is a subdomain of the owner
+     name (left side). Glue associated with other names is ignored,
+     and those names are iteratively resolved instead.
+   - This enhances the security posture of BIND, but some unintended
+     side effects may also be encountered. Operators should be aware
+     of the potential consequences.
+   - On an "cold" (empty) cache, some queries with deep recursion
+     depth can return "SERVFAIL" for the first few queries
+   - Some domain might not resolve at all (circular dependencies,
+     broken delegations) that used to resolve with older versions of
+     BIND 9
+   - Used the "Transitive Trust Checker" to visualize the delegation
+     dependencies of a zone
+     https://trans-trust.verisignlabs.com/?z=teams.microsoft.com
+ * See "Operational Notification: Impact of Stricter Glue Checking"
+   https://kb.isc.org/docs/strict-glue
+ * ISC is working on new code inside BIND 9 to mitigate the effects of
+   these new security fixes (See
+   https://gitlab.isc.org/isc-projects/bind9/-/merge_requests/11205
+   [Free ISC Gitlab account required])
+** Recommendations for DNS resolver operator:
+   - Increase the query limits of BIND 9 until the new code in BIND 9
+     is published
+{{{exercise-start}}}
+ * Temporary workaround for DNS resolution failures on cold
+   cache. Should be revised and removed once new BIND 9 version is
+   available:
+   #+BEGIN_EXAMPLE
+   options {
+        [...]
+	# see https://bind9.readthedocs.io/en/v9.20.17/reference.html#namedconf-statement-max-query-count
+        max-query-count 500;        # default: 200
+        max-recursion-queries 200;  # default: 50
+        max-recursion-depth 14;     # default: 7
+   };
+   #+END_EXAMPLE
+ * Implement the above changes on the DNS resolver at
+   =dnsrNN.dnslab.org=
+ * Check the configuration with =named-checkconf=
+ * Reload the new configuration with =rndc reconfig=
+ * Clear the BIND 9 Resolver cache with =rndc flush=
+ * Test queries (should work on first try, no =SERVFAIL=):
+   =dig @localhost debian.org=
+** Recommendations for Domain owner
+ * Check the "transitive trust" of your domain with
+   https://trans-trust.verisignlabs.com/
+ * Try to flatten the delegation depth
+ * Fix issues in the delegation (circular dependencies, missing
+   "glue")
+ * Remove false "glue": glue records in the associated NS record where
+   the target name (right side) is *not* a subdomain of the owner name
+   (left side)
+ * Deploy DNSSEC (so that these hardenings of insecure DNS is not
+   needed anymore)
+{{{exercise-end}}}
+
 * Questions and Answers                                            :noexport:
