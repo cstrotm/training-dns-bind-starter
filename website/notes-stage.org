@@ -845,7 +845,7 @@ dnslab.org. 86400 IN SOA (
        =_sip._tcp.example.com.= has at least an =SRV= RR.
    * Empty non-terminals apply to =SRV= RRs, but are an independent
      topic... that has now been covered.
-* querying the DNS with "dig"                                      :noexport:
+* Querying the DNS with "dig"                                      :noexport:
  * =dig= is the standard tool to send DNS queries.
  * It replaces the older (and obsolete =nslookup=)
  * The output of =dig= resembles the structure of DNS packets on the wire
@@ -1136,7 +1136,7 @@ dnslab.org. 86400 IN SOA (
    database)
 
 * Building and maintaining a DNS Resolver                          :noexport:
-** Installing BIND 9 from the RedHat/CentOS Repository
+** Installing BIND 9 from the RedHat Repository
 {{{exercise-start}}}
  * Inform the trainer in the chat when you're done
  * Use your virtual lab machine =dnsrNNN.dnslab.org=
@@ -1146,7 +1146,7 @@ dnslab.org. 86400 IN SOA (
    #+END_EXAMPLE
  * Install the BIND 9 DNS server software
    #+BEGIN_SRC
-   % dnf install bind9.16
+   % dnf install bind
    #+END_SRC
  * Start BIND 9 with the default (RedHat) configuration. The
    BIND 9 process name is =named= for /Name Daemon/
@@ -1435,6 +1435,7 @@ logging {
  * =recursing=: Dump the queries that are currently recursing. The
    default file is =named.recursing=. It can be changed with the
    =recursing-file= statement. =rndc recursing=
+** Exercise                                                        :noexport:
 {{{exercise-start}}}
  * Use your virtual lab machine =dnsrNNN.dnslab.org=
  * Write the content of the BIND DNS server's memory cache to a file with =rndc dumpdb=
@@ -1640,13 +1641,13 @@ logging {
  * Work on the =nsNNNa.dnslab.org= virtual machine (primary
    authoritative server). This is a new VM, different from the DNS
    resolver machine!
- * Enable sudo
+ * Get a root shell
    #+BEGIN_EXAMPLE
    $ sudo -s
    #+END_EXAMPLE
 # * install BIND 9
 #   #+BEGIN_EXAMPLE
-#   % dnf install bind9.16
+#   % dnf install bind
 #   #+END_EXAMPLE
  * The BIND 9 configuration file for the BIND 9 is in
    =/etc/named.conf=. It is very minimal!
@@ -1654,9 +1655,9 @@ logging {
    #+BEGIN_EXAMPLE
    % systemctl enable --now named
    #+END_EXAMPLE
- * Lets tweak the configuration file
-   =/etc/named.conf= for an authoritative-only
-   DNS server
+ * Lets tweak the configuration file =/etc/named.conf= for an
+   authoritative-only DNS server. Remove the existing configuration
+   and start a new configuration file in =/etc/named.conf=:
    #+BEGIN_EXAMPLE
    options {
            directory "/var/named";
@@ -1885,7 +1886,7 @@ logging {
    #+END_EXAMPLE
 # * install BIND 9
 #   #+BEGIN_EXAMPLE
-#   % dnf install bind9.16
+#   % dnf install bind
 #   #+END_EXAMPLE
  * The BIND 9 configuration file for the BIND 9 is in
    =/etc/named.conf=. It is very minimal!
@@ -2056,7 +2057,7 @@ logging {
 ** Fixing the delegation
  * Now we have a second authoritative DNS server for our zone
  * But it is not listed in the zone, nor in the delegation. So it will
-   not be found by external DNS resolvers
+   not be found by external DNS resolvers (Parent Child disagreement)
  * We need to fix this
 {{{exercise-start}}}
  * Work on the authoritative primary (=nsNNNa.dnslab.org=)
@@ -2073,6 +2074,10 @@ logging {
    zoneNNN.dnslab.org.    IN AAAA   2604:a880:4:1d0::40:0
    #+END_EXAMPLE
  * Check the zone configuration and reload the BIND 9 server (primary)
+   #+BEGIN_EXAMPLE
+   $ named-checkconf -z
+   $ rndc reload zoneNN.dnslab.org
+   #+END_EXAMPLE
  * Check on the primary and the secondary that the new zone has been
    transferred over to the secondary (check the =transfer.log= file)
  * Inform the operator of the parent zone (the trainer) that the new
@@ -2086,6 +2091,25 @@ logging {
    #+END_EXAMPLE
  * Do you see which server is responding faster?
 {{{exercise-end}}}
+
+* Testing changes to the zone                                      :noexport:
+{{{exercise-start}}}
+ * Work on the primary server =nsNNNa.dnslab.org=
+ * Add a new TXT Record to your zone =zoneNNN.dnslab.org=
+ * Increment the SOA serial number in the zone
+ * Check the configuration with =named-checkconf -z=
+ * If no errors are reported, reload the zone into the primary server
+   with =rndc reload zoneNNN.dnslab.org=
+ * Check for outgoing /Notify/ and Zone-Transfer messags in
+   =/var/named/transfer.log=
+ * Query the new TXT record
+   - From the DNS resolver machine
+   - From the primary server
+   - From the secondary server
+   - Do all server return the same data?
+   - Check the SOA serial on all authoritative DNS server for a zone
+     with =dig zoneNNN.dnslab.org +nssearch=
+{{{Exercise-end}}}
 
 * Master Zone File Shortcuts                                       :noexport:
 ** $ORIGIN
@@ -3184,6 +3208,11 @@ dig dnssec.works NS +dnssec +multi
    * Press =Execute= and look at the values displayed
    * Query your DNS resolver for existing and non-existing names (purposely
      cause =NXDOMAIN=)
+#+BEGIN_EXAMPLE
+dig @localhost dnslab.org a       # NOERROR
+dig @localhost xyz.dnslab.org a   # NXDOMAIN
+dig @localhost fail02.dnssec.works a  # SERVFAIL
+#+END_EXAMPLE
    * Click on =Execute= and view the new metrics.
    {{{exercise-end}}}
 
