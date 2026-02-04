@@ -96,14 +96,14 @@ Click on images to zoom in.
 
 *** Exercise
 {{{exercise-start}}}
- * there are repositories with ancient =hosts.txt= files on Github
- * open a new browser tab or window and look at a =hosts.txt= from the
+ * There are repositories with ancient =hosts.txt= files on Github
+ * Open a new browser tab or window and look at a =hosts.txt= from the
    pre-DNS aera:
    https://github.com/ttkzw/hosts.txt/blob/master/pub/hosts/19830119/HOSTS.TXT
- * compare with the file from December 1988:
+ * Compare with the file from December 1988:
    https://github.com/ttkzw/hosts.txt/blob/master/pub/hosts/19881208/HOSTS.TXT
- * you will see DNS domain names in the 1988 file. Any name you recognize?
- * what is strange (from today's point of view) about the IP addresses
+ * You will see DNS domain names in the 1988 file. Any name you recognize?
+ * What is strange (from today's point of view) about the IP addresses
    given to the first HOSTS in the 1988 list? Write your guess in the
    chat window.
 {{{exercise-end}}}
@@ -176,11 +176,11 @@ Click on images to zoom in.
 ** Why delegation?
  * =HOSTS.TXT= was monolithic, one large file
  * The DNS system is hierarchical
- * parts of the name space are delegated to the owners of the name
- * every owner controls the part of the name space she is owning
- * every owner can sub-delegate downwards
- * delegation goes from parent domain to child domain
- * owner of parent domain can revoke delegation (and re-delegate to a
+ * Parts of the name space are delegated to the owners of the name
+ * Every owner controls the part of the name space she is owning
+ * Every owner can sub-delegate downwards
+ * Delegation goes from parent domain to child domain
+ * Owner of parent domain can revoke delegation (and re-delegate to a
    different owner)
 
 ** Delegation
@@ -211,18 +211,18 @@ Click on images to zoom in.
  * The root-zone is hosted on 13 logical authoritative DNS server
    (Root-DNS-Server), named =a.root-servers.net= to
    =m.root-servers.net=
- * many logical Root-DNS-Server are spread around the world with
+ * Many logical Root-DNS-Server are spread around the world with
    identical copies
  * You can learn about the Root-DNS-Server system on
    https://root-servers.org/
- * the content of the root-zone is public and can be loaded from some
+ * The content of the root-zone is public and can be loaded from some
    of the root-server systems
 #+BEGIN_EXAMPLE
 dig @f.root-servers.net AXFR .
 #+END_EXAMPLE
 *** Exercise
 {{{exercise-start}}}
- * go to https://root-servers.org/ and look at the map, find out how
+ * Go to https://root-servers.org/ and look at the map, find out how
    many root-server instances exist worldwide and in your country (you
    need to zoom into the map). Write the answer in the chat.
 {{{exercise-end}}}
@@ -241,23 +241,23 @@ dig @f.root-servers.net AXFR .
     - Largest Top Level Domain by a factor of six. (2nd is cn:~21 million)
     - Registry: Verisign
  * *edu* generic top level domain (gTLD)
-    - mostly U.S. based, accredited postsecondary institutions
-    - thousands of subdomains (=berkeley.edu=, =havard.edu=, =stanford.edu= ...)
+    - Mostly U.S. based, accredited postsecondary institutions
+    - Thousands of subdomains (=berkeley.edu=, =havard.edu=, =stanford.edu= ...)
     - Registry: Educause (operated by VeriSign)
  * *gov* generic top level domain (gTLD)
     - (U.S. Federal) government entities
-    - hundreds of subdomains (=fbi.gov=, =gsa.gov=, =irs.gov= ... )
+    - Hundreds of subdomains (=fbi.gov=, =gsa.gov=, =irs.gov= ... )
     - Some U.S. federal agencies use =.fed.us.= rather than =.gov.=
     - [[https://tools.ietf.org/html/rfc2146][RFC 2146 (U.S. Government Internet Domain Names)]] defines the use of =.gov= gTLD
     - Registry: General Services Administration
  * *mil* generic top level domain (gTLD)
     - (U.S.) military entities
-    - few (public) subdomains (=af.mil=, =army.mil=, =navy.mil=, =usmc.mil= ... )
+    - Few (public) subdomains (=af.mil=, =army.mil=, =navy.mil=, =usmc.mil= ... )
     - Registry: Defense Information Systems Agency
  * *net* generic top level domain (gTLD)
-    - formerly networking entities and components
-    - now a general purpose TLD with nearly 14 million subdomains
-    - the 4th most popular domain (after =com=, =cn= and =de=)
+    - Formerly networking entities and components
+    - Now a general purpose TLD with nearly 14 million subdomains
+    - The 4th most popular domain (after =com=, =cn= and =de=)
     - Registry: Verisign
  * *org* generic top level domain (gTLD)
     - Generally noncommercial entities that do not fit in other categories
@@ -275,7 +275,7 @@ dig @f.root-servers.net AXFR .
    - Some that once existed have been deleted (e.g. =.yu= Yugoslavia)
 *** Exercise
 {{{exercise-start}}}
- * how many ccTLDs are currently delegated? Write the answer in the chat.
+ * How many ccTLDs are currently delegated? Write the answer in the chat.
  * Unix/Linux command to calculate the number of delegated ccTLDs (from
    the DNS root-zone)
    #+BEGIN_EXAMPLE
@@ -285,7 +285,7 @@ dig @f.root-servers.net AXFR .
         sort -u |
         wc -l
    #+END_EXAMPLE
- * try to understand what this command pipeline is doing
+ * Try to understand what this command pipeline is doing
 {{{exercise-end}}}
 *** Special Use Top-Level-Domains
  * [[https://tools.ietf.org/html/rfc2606][RFC 2606 (1999 "Reserved Top Level DNS Names")]] and updates in [[https://tools.ietf.org/html/rfc6761][RFC
@@ -300,7 +300,7 @@ dig @f.root-servers.net AXFR .
      internal use. This domain is similar to RFC 1912 private IPv4
      addresses. (Internet Draft: [[https://datatracker.ietf.org/doc/html/draft-davies-internal-tld][A Top-level Domain for Private Use]])
 
- * special use domains: pre-internet networks have used domain names
+ * Special use domains: pre-internet networks have used domain names
    not registered (=.bitnet=, =.csnet=, =.uucp=). Also newer
    technologies are using non-registered gTLDs:
    - =.onion=, =.exit=: TOR privacy network
@@ -315,8 +315,7 @@ dig @f.root-servers.net AXFR .
    space. It is used in the Home Networking Control Protocol (HNCP)
    suite, but can also used for other cases, such as Microsoft Active
    Directory domains.
- * [[https://datatracker.ietf.org/doc/html/rfc7050][RFC 7050 - Discovery of the IPv6 Prefix Used for IPv6 Address
-   Synthesis]] and [[https://datatracker.ietf.org/doc/html/rfc8880][RFC 8880 - Special Use Domain Name 'ipv4only.arpa']]
+ * [[https://datatracker.ietf.org/doc/html/rfc7050][RFC 7050 - Discovery of the IPv6 Prefix Used for IPv6 Address Synthesis]] and [[https://datatracker.ietf.org/doc/html/rfc8880][RFC 8880 - Special Use Domain Name 'ipv4only.arpa']]
    define the special domain name =ipv4only.arpa=. This domain is
    being used in DNS64 clients on an IPv6-only network to detect the
    presence of DNS64 and for learning the IPv6 prefix used for
@@ -326,10 +325,10 @@ dig @f.root-servers.net AXFR .
  * IANA Registry for "special use domain names":
     https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xml
 *** New Top-Level-Domains
- * in 1988, a new generic top-level domain was introduced: =int=
+ * In 1988, a new generic top-level domain was introduced: =int=
    - =.int= was historically used for "Internet infrastructure
      databases" to replace =arpa= (for example used as =ip6.int.=)
-   - in 2000, the IAB decided to keep =arpa= and use =int= for
+   - In 2000, the IAB decided to keep =arpa= and use =int= for
      international treaty-based organizations, United Nations
      agencies, observers at the UN
  * Starting in 2000, ICANN allowed several new gTLDs to be created:
@@ -348,7 +347,7 @@ dig @f.root-servers.net AXFR .
 {{{exercise-start}}}
  * DNS Delegation Information: https://www.buddyns.com/delegation-lab
  * Trace DNS delegation https://simpledns.plus/lookup-dg
- * DNS Bajaj http://www.zonecut.net/dns/
+# * DNS Bajaj http://www.zonecut.net/dns/
  * Use the above web-services to number of delegations from the root
    for the domain =sub.dnslab.org=. Not all the tools
    handle this domain well. Write the answer in the chat window
