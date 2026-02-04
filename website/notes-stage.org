@@ -724,6 +724,23 @@ dnslab.org. 86400 IN SOA (
      - Preference: An unsigned, unscaled 16 bit value (not hops, time or anything else).
          * lower value => higher preference
      - Domain name (host name) of an SMTP server.
+*** Mail Server Best DNS Practices (related to the MX record)
+  * BEST PRACTICE: A =PTR= RR for the IP of a mail server should return
+    the server's domain name.
+    #+begin_example
+    $ dig +noall +answer cisco.com MX
+    cisco.com.		1772	IN	MX	10 alln-mx-01.cisco.com.
+    <OUTPUT SUPPRESSED>
+
+    # dig +noall +answer alln-mx-01.cisco.com A
+    alln-mx-01.cisco.com.	1800	 IN	A	173.37.147.230
+
+    # dig +noall +answer 230.147.37.173.in-addr.arpa PTR
+    230.147.37.173.in-addr.arpa. 1800 IN	PTR	alln-mx-01.cisco.com.
+    #+end_example
+    - The =PTR= and =A= RRs of the mail server point to each other.
+    - If the =PTR= is missing, or it does not match the domain name,
+      mail from that domain will likely be treated as SPAM.
 ** SPF Record
    * The =SPF= record (discontinued in RFC 7208, now =TXT=) allows to specify
      servers permitted to send mail with envelope-from a domain.
@@ -749,23 +766,6 @@ dnslab.org. 86400 IN SOA (
    * Other possible values for =p= are =none= and =reject=
    * =adkim= and =aspf= can be relaxed (=r=) or strict (=s=). In strict mode
      domain must match exactly, and in relaxed mode subdomains are treated equally.
-*** Mail Server Best DNS Practices (related to the MX record)
-  * BEST PRACTICE: A =PTR= RR for the IP of a mail server should return
-    the server's domain name.
-    #+begin_example
-    $ dig +noall +answer cisco.com MX
-    cisco.com.		1772	IN	MX	10 alln-mx-01.cisco.com.
-    <OUTPUT SUPPRESSED>
-
-    # dig +noall +answer alln-mx-01.cisco.com A
-    alln-mx-01.cisco.com.	1800	 IN	A	173.37.147.230
-
-    # dig +noall +answer 230.147.37.173.in-addr.arpa PTR
-    230.147.37.173.in-addr.arpa. 1800 IN	PTR	alln-mx-01.cisco.com.
-    #+end_example
-    - The =PTR= and =A= RRs of the mail server point to each other.
-    - If the =PTR= is missing, or it does not match the domain name,
-      mail from that domain will likely be treated as SPAM.
 ** SRV Record
   * The =SRV= record gives the domain name of a server that provides
     the service encoded in the owner name.
@@ -1148,7 +1148,7 @@ dnslab.org. 86400 IN SOA (
    #+BEGIN_SRC
    % dnf install bind9.16
    #+END_SRC
- * Start BIND 9 with the default (RedHat/CentOS 8) configuration. The
+ * Start BIND 9 with the default (RedHat) configuration. The
    BIND 9 process name is =named= for /Name Daemon/
    #+BEGIN_EXAMPLE
    % systemctl enable --now named
@@ -1170,11 +1170,10 @@ dnslab.org. 86400 IN SOA (
     =dnslab.org= faster than the (previous) query for =debian.org=?
 {{{exercise-end}}}
 ** Basic BIND 9 configuration
- * The BIND 9 configuration on RedHat/CentOS systems is in
-   =/etc/named.conf=. Other Unix/Linux systems might store the
-   configuration file in a different place (like =/etc/bind= on
-   Debian/Ubuntu)
-** Default RedHat/CentOS 8 configuration
+ * The BIND 9 configuration on RedHat systems is in =/etc/named.conf=.
+   Other Unix/Linux systems might store the configuration file in a
+   different place (like =/etc/bind= on Debian/Ubuntu)
+** Default RedHat configuration
 
  [[./img/0501-named-conf.png]]
 
@@ -2103,7 +2102,7 @@ $ORIGIN zoneNNN.dnslab.org.
 @          30 IN SOA dns-main hostmaster 5 7200 3600 2592000 600
 @          30 IN NS  dns-main
 @          30 IN NS  dns2.someotherzone.com.
-
+@          30 IN A   192.0.2.200
 dns-main   30 IN A   192.0.2.100
 www        30 IN CNAME @
 #+END_EXAMPLE
@@ -2115,6 +2114,7 @@ zoneNNN.dnslab.org.		   30 IN SOA	 (
                                         5 7200 3600 2592000 600 )
 zoneNNN.dnslab.org.		   30 IN NS      dns2.someotherzone.com.
 zoneNNN.dnslab.org.		   30 IN NS      dns-main.zoneNNN.dnslab.org.
+zoneNNN.dnslab.org.                30 IN A       192.0.2.200
 dns-main.zoneNNN.dnslab.org.       30 IN A       192.0.2.100
 www.zoneNNN.dnslab.org.            30 IN CNAME   zoneNNN.dnslab.org.
 #+END_EXAMPLE
@@ -3186,6 +3186,36 @@ dig dnssec.works NS +dnssec +multi
      cause =NXDOMAIN=)
    * Click on =Execute= and view the new metrics.
    {{{exercise-end}}}
+
+* Giving Delegation                                                :noexport:
+{{{exercise-start}}}
+ * A client/customer/colleague/subsidary requests a dekegation of the
+   sub-domain =trainer.zoneNNN.dnslab.org= to their DNS nameserver
+ * The target name server for the delegation are =ns010a.dnslab.org=
+   and =ns010b.dnslab.org=
+ * Create a delegation inside your zone for
+   =trainer.zoneNNN.dnslab.org= towards the target DNS server
+ * Make sure the changes propagate to your secondary server
+ * Test the delegation by resolving the TXT record on
+   =trainer.zoneNNN.dnslab.org=. You should get a TXT record in answer
+   section.
+{{{exercise-end}}}
+** Solution:
+ * You zone needs new delegation NS record for the subdomain
+   =trainer.zoneNNN.dnslab.org=. There are two NS records, one for
+   each authoritative DNS server of the delegated zone:
+#+BEGIN_EXAMPLE
+trainer.zoneNNN.dnslab.org.     IN NS  nsYYYa.dnslab.org.
+trainer.zoneNNN.dnslab.org.     IN NS  nsYYYb.dnslab.org.
+#+END_EXAMPLE
+ * Because this is a change in your zone, the SOA serial must be
+   incremented, else the secondaries will not pick up the change
+ * The zonetransfer should be visible in the zone transfer logfile
+   =transfer.log=
+ * The command =dig zoneNNN.dnslab.org +nssearch= should show the same
+   SOA serial on both authoritative DNS server
+ * The test =dig TXT trainer.zoneNNN.dnslab.org= should return the
+   text =Great, the delegation works!=
 
 * Stub zone                                                        :noexport:
 
